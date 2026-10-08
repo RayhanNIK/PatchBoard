@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.PatchBoard" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/pb_primary</item>
+        <item name="colorOnPrimary">@color/pb_on_primary</item>
+        <item name="colorPrimaryContainer">@color/pb_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/pb_on_primary_container</item>
+        <item name="colorSecondaryContainer">@color/pb_chip_pressed</item>
+        <item name="colorOnSecondaryContainer">@color/pb_primary</item>
+        <item name="colorSurface">@color/pb_surface</item>
+        <item name="colorOnSurface">@color/pb_on_surface</item>
+        <item name="colorOnSurfaceVariant">@color/pb_on_surface_variant</item>
+        <item name="colorOutline">@color/pb_outline</item>
+        <item name="colorError">@color/pb_error</item>
+        <item name="android:colorBackground">@color/pb_bg</item>
+        <item name="android:windowBackground">@color/pb_bg</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="bottomSheetDialogTheme">@style/PatchBoard.BottomSheetDialog</item>
+        <!-- Optional: to match the prototype's Source Sans 3, add the font files in
+             res/font/ (family file source_sans_3.xml) and uncomment:
+        <item name="android:fontFamily">@font/source_sans_3</item>
+        <item name="fontFamily">@font/source_sans_3</item> -->
+    </style>
+
+    <!-- Bottom sheets (comments, new report, admin sign-in) -->
+    <style name="PatchBoard.BottomSheetDialog" parent="ThemeOverlay.Material3.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/PatchBoard.BottomSheet</item>
+    </style>
+    <style name="PatchBoard.BottomSheet" parent="Widget.Material3.BottomSheet.Modal">
+        <item name="backgroundTint">@color/pb_modal_bg</item>
+        <item name="shapeAppearanceOverlay">@style/PatchBoard.SheetShape</item>
+    </style>
+    <style name="PatchBoard.SheetShape" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">20dp</item>
+        <item name="cornerSizeTopRight">20dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+    </style>
+
+    <!-- Filter chips: All / High / Medium / Low -->
+    <style name="PatchBoard.FilterChip" parent="Widget.Material3.Chip.Filter">
+        <item name="chipBackgroundColor">@color/chip_filter_bg</item>
+        <item name="chipStrokeColor">@color/chip_filter_stroke</item>
+        <item name="chipStrokeWidth">1.5dp</item>
+        <item name="checkedIconVisible">false</item>
+        <item name="android:textColor">@color/chip_filter_text</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Small outlined buttons on cards (comments / upvote) -->
+    <style name="PatchBoard.SmallButton" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:paddingStart">10dp</item>
+        <item name="android:paddingEnd">10dp</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="cornerRadius">8dp</item>
+        <item name="strokeColor">@color/pb_outline</item>
+        <item name="strokeWidth">1.5dp</item>
+        <item name="backgroundTint">@color/pb_chip_bg</item>
+        <item name="iconSize">14dp</item>
+        <item name="iconPadding">4dp</item>
+        <item name="android:textColor">@color/pb_on_surface_variant</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Admin Back / Forward -->
+    <style name="PatchBoard.MoveButton" parent="Widget.Material3.Button.TonalButton">
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="cornerRadius">8dp</item>
+        <item name="backgroundTint">@color/move_btn_bg</item>
+        <item name="android:textColor">@color/move_btn_text</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Pill buttons (Save / OK / Cancel) -->
+    <style name="PatchBoard.PillButton" parent="Widget.Material3.Button">
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:paddingStart">14dp</item>
+        <item name="android:paddingEnd">14dp</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="cornerRadius">20dp</item>
+        <item name="backgroundTint">@color/pb_primary</item>
+        <item name="android:textColor">@color/pb_on_primary</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="PatchBoard.PillButton.Outlined" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:paddingStart">14dp</item>
+        <item name="android:paddingEnd">14dp</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="cornerRadius">20dp</item>
+        <item name="strokeColor">@color/pb_outline</item>
+        <item name="strokeWidth">1.5dp</item>
+        <item name="android:textColor">@color/pb_on_surface_variant</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Large primary action (Submit Report / Sign In) -->
+    <style name="PatchBoard.PrimaryButton" parent="Widget.Material3.Button">
+        <item name="android:minHeight">48dp</item>
+        <item name="cornerRadius">12dp</item>
+        <item name="backgroundTint">@color/btn_primary_bg</item>
+        <item name="android:textColor">@color/btn_primary_text</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Take Photo / Gallery -->
+    <style name="PatchBoard.PhotoButton" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="cornerRadius">10dp</item>
+        <item name="strokeColor">@color/pb_outline</item>
+        <item name="strokeWidth">1.5dp</item>
+        <item name="backgroundTint">@color/pb_chip_bg</item>
+        <item name="iconTint">@color/pb_on_surface</item>
+        <item name="android:textColor">@color/pb_on_surface</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Borderless text actions (Edit / Delete / Change) -->
+    <style name="PatchBoard.TextAction" parent="Widget.Material3.Button.TextButton">
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:paddingStart">0dp</item>
+        <item name="android:paddingEnd">0dp</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:textColor">@color/pb_primary</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="PatchBoard.Input" parent="Widget.AppCompat.EditText">
+        <item name="android:background">@drawable/bg_input</item>
+        <item name="android:textColor">@color/pb_on_surface</item>
+        <item name="android:textColorHint">@color/pb_on_surface_variant</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+    </style>
+
+    <style name="PatchBoard.FieldLabel" parent="">
+        <item name="android:textSize">11sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/pb_on_surface_variant</item>
+    </style>
+</resources>
