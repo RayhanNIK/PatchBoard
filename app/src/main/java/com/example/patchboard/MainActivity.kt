@@ -13,10 +13,12 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.patchboard.analytics.AnalyticsFragment
 import com.example.patchboard.databinding.ActivityMainBinding
 import com.example.patchboard.model.Priority
 import com.example.patchboard.model.SortMode
@@ -44,6 +46,13 @@ class MainActivity : AppCompatActivity(), CardActions {
         override fun handleOnBackPressed() = vm.setSearchOpen(false)
     }
 
+    private val closeReportsOnBack = object : OnBackPressedCallback(false) {
+        override fun handleOnBackPressed() {
+            showReportsPage(false)
+            binding.bottomNav.selectedItemId = R.id.nav_board
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         vm = ViewModelProvider(this)[BoardViewModel::class.java]
@@ -66,6 +75,7 @@ class MainActivity : AppCompatActivity(), CardActions {
         }
 
         onBackPressedDispatcher.addCallback(this, closeSearchOnBack)
+        onBackPressedDispatcher.addCallback(this, closeReportsOnBack) // added last = checked first
 
         setupBoard()
         setupTopBar()
@@ -113,11 +123,14 @@ class MainActivity : AppCompatActivity(), CardActions {
 
     private fun setupBottomNav() {
         binding.bottomNav.setOnItemSelectedListener { item ->
-            if (item.itemId == R.id.nav_board) true
-            else {
-                // Reports / Map / Profile are placeholders in the prototype too.
-                Toast.makeText(this, R.string.coming_soon, Toast.LENGTH_SHORT).show()
-                false
+            when (item.itemId) {
+                R.id.nav_board -> { showReportsPage(false); true }
+                R.id.nav_reports -> { showReportsPage(true); true }
+                else -> {
+                    // Map / Profile are placeholders in the prototype too.
+                    Toast.makeText(this, R.string.coming_soon, Toast.LENGTH_SHORT).show()
+                    false
+                }
             }
         }
     }
@@ -177,6 +190,23 @@ class MainActivity : AppCompatActivity(), CardActions {
         binding.btnSort.strokeColor =
             ColorStateList.valueOf(color(if (sorted) R.color.pb_primary else R.color.pb_outline))
         binding.btnSort.setTextColor(color(if (sorted) R.color.pb_on_primary else R.color.pb_on_surface_variant))
+    }
+
+    private fun showReportsPage(show: Boolean) {
+        if (show && supportFragmentManager.findFragmentByTag("analytics") == null) {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.pageContainer, AnalyticsFragment.newInstance(), "analytics")
+                .commit()
+        }
+        binding.pageContainer.isVisible = show
+        closeReportsOnBack.isEnabled = show
+        if (show && vm.searchOpen) vm.setSearchOpen(false)
+    }
+
+    // The nav bar restores its selected tab after onCreate; make the page match it.
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        showReportsPage(binding.bottomNav.selectedItemId == R.id.nav_reports)
     }
 
     // ── CardActions ──────────────────────────────────────────────────────────
