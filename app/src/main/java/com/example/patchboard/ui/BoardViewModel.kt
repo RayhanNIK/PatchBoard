@@ -58,7 +58,7 @@ class BoardViewModel : ViewModel() {
     fun visibleColumns(): List<Column> = columns.map { col ->
         var cards = col.cards.filter {
             matchesSearch(it, normalizedQuery) &&
-                (priorityFilter == null || it.priority == priorityFilter)
+                    (priorityFilter == null || it.priority == priorityFilter)
         }
         cards = when (sortMode) {
             SortMode.OFF -> cards
@@ -105,7 +105,12 @@ class BoardViewModel : ViewModel() {
         if (from == -1) return
         val to = if (forward) from + 1 else from - 1
         if (to !in columns.indices) return
-        val card = columns[from].cards.first { it.id == cardId }
+        val moving = columns[from].cards.first { it.id == cardId }
+        // Analytics: remember when a report was completed (cleared if it is moved back out of Fixed).
+        val card = when (columns[to].stage) {
+            Stage.FIXED -> moving.copy(resolvedAt = System.currentTimeMillis())
+            else -> moving.copy(resolvedAt = null)
+        }
         columns = columns.mapIndexed { i, col ->
             when (i) {
                 from -> col.copy(cards = col.cards.filter { it.id != cardId })
@@ -166,4 +171,6 @@ class BoardViewModel : ViewModel() {
     }
 
     fun signOut() { isAdmin = false; notifyChanged() }
+
+    fun snapshot(): List<Column> = columns.map { it.copy(cards = it.cards.toList()) }
 }
