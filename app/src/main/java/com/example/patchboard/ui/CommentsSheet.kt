@@ -12,7 +12,6 @@ import android.annotation.SuppressLint
 import android.view.MotionEvent
 import androidx.core.text.HtmlCompat
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.ViewModelProvider
@@ -22,7 +21,6 @@ import com.example.patchboard.databinding.SheetCommentsBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlin.math.max
 
 /** Bottom sheet showing a report's comment thread (the web version's CommentModal). */
 class CommentsSheet : BottomSheetDialogFragment() {
