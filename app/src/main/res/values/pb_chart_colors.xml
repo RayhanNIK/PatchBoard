@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Trend chart series -->
+    <color name="chart_filed">#6750A4</color>
+    <color name="chart_repaired">#006D36</color>
+    <!-- Status donut -->
+    <color name="chart_status_reported">#B3261E</color>
+    <color name="chart_status_in_progress">#7D5260</color>
+    <color name="chart_status_fixed">#006D36</color>
+    <!-- Priority bars -->
+    <color name="chart_prio_high">#BA1A1A</color>
+    <color name="chart_prio_medium">#9C4300</color>
+    <color name="chart_prio_low">#006D36</color>
+</resources>
