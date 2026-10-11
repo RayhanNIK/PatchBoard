@@ -81,6 +81,18 @@ class CommentsSheet : BottomSheetDialogFragment() {
 
         // Compose box
         b.etComment.doAfterTextChanged { updateSendButton() }
+        b.etComment.setOnTouchListener { v, event ->
+            if (v.canScrollVertically(-1) || v.canScrollVertically(1)) {
+                v.parent.requestDisallowInterceptTouchEvent(true)
+            }
+            if (event.actionMasked == MotionEvent.ACTION_UP ||
+                event.actionMasked == MotionEvent.ACTION_CANCEL
+            ) {
+                v.parent.requestDisallowInterceptTouchEvent(false)
+            }
+            false
+        }
+
         b.btnSend.setOnClickListener { send() }
 
         // "Posting as" switcher
