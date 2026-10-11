@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.widget.FrameLayout
+import android.annotation.SuppressLint
+import android.view.MotionEvent
 import androidx.core.text.HtmlCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -59,6 +61,7 @@ class CommentsSheet : BottomSheetDialogFragment() {
         dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         // Keep the input bar above the keyboard / gesture bar.
         ViewCompat.setOnApplyWindowInsetsListener(b.sheetRoot) { _, insets ->
