@@ -4,11 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.widget.FrameLayout
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updatePadding
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.ViewModelProvider
 import com.example.patchboard.R
@@ -16,7 +14,6 @@ import com.example.patchboard.databinding.SheetAdminLoginBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlin.math.max
 
 class AdminLoginSheet : BottomSheetDialogFragment() {
 
@@ -42,17 +39,10 @@ class AdminLoginSheet : BottomSheetDialogFragment() {
             state = BottomSheetBehavior.STATE_EXPANDED
             skipCollapsed = true
         }
+        dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val basePad = requireContext().dp(16)
-        ViewCompat.setOnApplyWindowInsetsListener(b.sheetRoot) { _, insets ->
-            val ime = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
-            val nav = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
-            b.formBody.updatePadding(bottom = basePad + max(ime, nav))
-            insets
-        }
-
         b.etUsername.doAfterTextChanged { clearError() }
         b.etPassword.doAfterTextChanged { clearError() }
         b.etPassword.setOnEditorActionListener { _, actionId, _ ->
