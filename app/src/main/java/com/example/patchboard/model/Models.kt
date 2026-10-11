@@ -52,6 +52,7 @@ data class ReportCard(
     val comments: List<Comment>,
     val createdAt: Long,          // epoch millis
     val imageUri: String? = null, // content:// or file:// URI string
+    val resolvedAt: Long? = null,
 )
 
 data class Column(val stage: Stage, val cards: List<ReportCard>)
