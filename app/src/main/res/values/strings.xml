@@ -1,6 +1,71 @@
 <resources>
+
+    <!-- App -->
     <string name="app_name">PatchBoard</string>
     <string name="tagline">Campus Infrastructure Diagnostics</string>
-    <string name="search_hint">Search reports</string>
     <string name="coming_soon">Coming soon</string>
+
+    <!-- Top bar & filters -->
+    <string name="search_hint">Search reports</string>
+    <string name="cd_toggle_night_mode">Toggle night mode</string>
+    <string name="cd_admin_sign_in">Admin sign in</string>
+    <string name="admin_badge">Admin</string>
+    <string name="cd_clear_search">Clear search</string>
+    <string name="filter_all">All</string>
+    <string name="priority_high">High</string>
+    <string name="priority_medium">Medium</string>
+    <string name="priority_low">Low</string>
+    <string name="sort_off">⇅ Sort</string>
+    <string name="cd_new_report">New report</string>
+
+    <!-- Bottom navigation -->
+    <string name="nav_board">Board</string>
+    <string name="nav_reports">Reports</string>
+    <string name="nav_map">Map</string>
+    <string name="nav_profile">Profile</string>
+
+    <!-- Cards & photos -->
+    <string name="action_back">◀ Back</string>
+    <string name="action_forward">Forward ▶</string>
+    <string name="cd_attached_photo">Attached photo</string>
+    <string name="cd_full_photo">Full size photo</string>
+    <string name="cd_photo_preview">Preview</string>
+    <string name="cd_remove_photo">Remove photo</string>
+    <string name="cd_close">Close</string>
+
+    <!-- Comments -->
+    <string name="comment_edited">(edited)</string>
+    <string name="action_save">Save</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_change">Change</string>
+    <string name="action_ok">OK</string>
+    <string name="hint_your_name">Your name</string>
+    <string name="comments_empty">No comments yet — be the first!</string>
+    <string name="hint_add_comment">Add a comment…</string>
+    <string name="cd_send">Send</string>
+
+    <!-- New report -->
+    <string name="new_report_title">New Report</string>
+    <string name="label_location">LOCATION</string>
+    <string name="label_title_required">TITLE *</string>
+    <string name="hint_issue_title">Brief issue title…</string>
+    <string name="label_description">DESCRIPTION</string>
+    <string name="hint_issue_description">Describe the issue in detail…</string>
+    <string name="label_priority">PRIORITY</string>
+    <string name="label_attach_photo">ATTACH PHOTO</string>
+    <string name="action_take_photo">Take Photo</string>
+    <string name="action_gallery">Gallery</string>
+    <string name="action_submit_report">Submit Report</string>
+
+    <!-- Admin sign in -->
+    <string name="admin_sign_in_title">Admin Sign In</string>
+    <string name="admin_sign_in_subtitle">Administrative access only</string>
+    <string name="label_username">USERNAME</string>
+    <string name="hint_username">admin</string>
+    <string name="label_password">PASSWORD</string>
+    <string name="hint_password">••••••••</string>
+    <string name="error_invalid_login">Incorrect username or password.</string>
+    <string name="action_sign_in">Sign In</string>
 </resources>

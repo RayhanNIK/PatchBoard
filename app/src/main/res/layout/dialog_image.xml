@@ -9,7 +9,7 @@
         android:id="@+id/imgFull"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:contentDescription="Full size photo"
+        android:contentDescription="@string/cd_full_photo"
         android:padding="16dp"
         android:scaleType="fitCenter" />
 
@@ -20,7 +20,7 @@
         android:layout_gravity="top|end"
         android:layout_margin="20dp"
         android:background="@drawable/bg_circle_topbar"
-        android:contentDescription="Close"
+        android:contentDescription="@string/cd_close"
         android:src="@drawable/ic_close"
         app:tint="#FFFFFF" />
 </FrameLayout>

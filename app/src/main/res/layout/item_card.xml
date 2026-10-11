@@ -79,7 +79,7 @@
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:layout_marginTop="9dp"
-            android:contentDescription="Attached photo"
+            android:contentDescription="@string/cd_attached_photo"
             android:scaleType="centerCrop"
             android:visibility="gone"
             app:shapeAppearanceOverlay="@style/PatchBoard.Shape8" />
@@ -100,7 +100,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="3dp"
                 android:layout_weight="1"
-                android:text="◀ Back" />
+                android:text="@string/action_back" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnForward"
@@ -109,7 +109,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="3dp"
                 android:layout_weight="1"
-                android:text="Forward ▶" />
+                android:text="@string/action_forward" />
         </LinearLayout>
 
         <!-- Footer: priority | comments | upvote -->

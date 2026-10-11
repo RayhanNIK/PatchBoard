@@ -51,7 +51,7 @@
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:background="@drawable/bg_circle_close"
-                android:contentDescription="Close"
+                android:contentDescription="@string/cd_close"
                 android:padding="9dp"
                 android:src="@drawable/ic_close"
                 app:tint="@color/pb_on_surface" />
@@ -114,7 +114,7 @@
                     style="@style/PatchBoard.TextAction"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Change" />
+                    android:text="@string/action_change" />
             </LinearLayout>
 
             <LinearLayout
@@ -132,7 +132,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="Your name"
+                    android:hint="@string/hint_your_name"
                     android:imeOptions="actionDone"
                     android:importantForAutofill="no"
                     android:inputType="textPersonName|textCapWords"
@@ -147,7 +147,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="6dp"
-                    android:text="OK" />
+                    android:text="@string/action_ok" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
@@ -189,7 +189,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="No comments yet — be the first!"
+                android:text="@string/comments_empty"
                 android:textColor="@color/pb_on_surface_variant"
                 android:textSize="13sp" />
         </LinearLayout>
@@ -222,7 +222,7 @@
             android:layout_marginEnd="8dp"
             android:layout_weight="1"
             android:background="@drawable/bg_input_pill"
-            android:hint="Add a comment…"
+            android:hint="@string/hint_add_comment"
             android:importantForAutofill="no"
             android:inputType="textMultiLine|textCapSentences"
             android:maxLines="4"
@@ -242,7 +242,7 @@
             android:layout_width="38dp"
             android:layout_height="38dp"
             android:background="@drawable/bg_dot"
-            android:contentDescription="Send"
+            android:contentDescription="@string/cd_send"
             android:padding="9dp"
             android:src="@drawable/ic_send" />
     </LinearLayout>

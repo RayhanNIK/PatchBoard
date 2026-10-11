@@ -28,7 +28,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="New Report"
+            android:text="@string/new_report_title"
             android:textColor="@color/pb_on_surface"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -38,7 +38,7 @@
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:background="@drawable/bg_circle_close"
-            android:contentDescription="Close"
+            android:contentDescription="@string/cd_close"
             android:padding="9dp"
             android:src="@drawable/ic_close"
             app:tint="@color/pb_on_surface" />
@@ -65,7 +65,7 @@
                 style="@style/PatchBoard.FieldLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="LOCATION" />
+                android:text="@string/label_location" />
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/locationGroup"
@@ -82,7 +82,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
-                android:text="TITLE *" />
+                android:text="@string/label_title_required" />
 
             <EditText
                 android:id="@+id/etTitle"
@@ -90,7 +90,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                android:hint="Brief issue title…"
+                android:hint="@string/hint_issue_title"
                 android:importantForAutofill="no"
                 android:inputType="textCapSentences"
                 android:maxLines="1" />
@@ -101,7 +101,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
-                android:text="DESCRIPTION" />
+                android:text="@string/label_description" />
 
             <EditText
                 android:id="@+id/etDescription"
@@ -110,7 +110,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
                 android:gravity="top|start"
-                android:hint="Describe the issue in detail…"
+                android:hint="@string/hint_issue_description"
                 android:importantForAutofill="no"
                 android:inputType="textMultiLine|textCapSentences"
                 android:minLines="3" />
@@ -121,7 +121,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
-                android:text="PRIORITY" />
+                android:text="@string/label_priority" />
 
             <LinearLayout
                 android:id="@+id/priorityRow"
@@ -136,7 +136,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
-                android:text="ATTACH PHOTO" />
+                android:text="@string/label_attach_photo" />
 
             <FrameLayout
                 android:id="@+id/photoPreviewBox"
@@ -149,7 +149,7 @@
                     android:id="@+id/imgPreview"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:contentDescription="Preview"
+                    android:contentDescription="@string/cd_photo_preview"
                     android:scaleType="centerCrop"
                     app:shapeAppearanceOverlay="@style/PatchBoard.Shape8" />
 
@@ -161,7 +161,7 @@
                     android:layout_margin="6dp"
                     android:background="@drawable/bg_circle_topbar"
                     android:backgroundTint="#99000000"
-                    android:contentDescription="Remove photo"
+                    android:contentDescription="@string/cd_remove_photo"
                     android:padding="8dp"
                     android:src="@drawable/ic_close"
                     app:tint="#FFFFFF" />
@@ -181,7 +181,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1"
-                    android:text="Take Photo"
+                    android:text="@string/action_take_photo"
                     app:icon="@drawable/ic_camera" />
 
                 <com.google.android.material.button.MaterialButton
@@ -191,7 +191,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
                     android:layout_weight="1"
-                    android:text="Gallery"
+                    android:text="@string/action_gallery"
                     app:icon="@drawable/ic_image" />
             </LinearLayout>
 
@@ -201,7 +201,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14dp"
-                android:text="Submit Report" />
+                android:text="@string/action_submit_report" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </LinearLayout>

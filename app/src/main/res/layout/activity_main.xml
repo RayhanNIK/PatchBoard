@@ -58,7 +58,7 @@
                 android:layout_height="40dp"
                 android:layout_marginTop="2dp"
                 android:background="@drawable/bg_circle_topbar"
-                android:contentDescription="Toggle night mode"
+                android:contentDescription="@string/cd_toggle_night_mode"
                 android:src="@drawable/ic_dark_mode"
                 app:tint="@color/pb_topbar_text" />
 
@@ -69,7 +69,7 @@
                 android:layout_marginStart="4dp"
                 android:layout_marginTop="2dp"
                 android:background="@drawable/bg_circle_topbar"
-                android:contentDescription="Search reports"
+                android:contentDescription="@string/search_hint"
                 android:src="@drawable/ic_search"
                 app:tint="@color/pb_topbar_text" />
 
@@ -80,7 +80,7 @@
                 android:layout_marginStart="4dp"
                 android:layout_marginTop="2dp"
                 android:background="@drawable/bg_circle_topbar"
-                android:contentDescription="Admin sign in"
+                android:contentDescription="@string/cd_admin_sign_in"
                 android:src="@drawable/ic_shield"
                 app:tint="@color/pb_topbar_text" />
 
@@ -91,7 +91,7 @@
                 android:layout_height="40dp"
                 android:layout_marginStart="4dp"
                 android:layout_marginTop="2dp"
-                android:text="Admin"
+                android:text="@string/admin_badge"
                 android:textColor="@color/pb_topbar_text"
                 android:visibility="gone"
                 app:backgroundTint="@color/pb_topbar_icon_bg_active"
@@ -152,7 +152,7 @@
                     android:layout_width="26dp"
                     android:layout_height="26dp"
                     android:background="@drawable/bg_circle_close"
-                    android:contentDescription="Clear search"
+                    android:contentDescription="@string/cd_clear_search"
                     android:padding="6dp"
                     android:src="@drawable/ic_close"
                     app:tint="@color/pb_on_surface_variant"
@@ -203,28 +203,28 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:checked="true"
-                        android:text="All" />
+                        android:text="@string/filter_all" />
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chipHigh"
                         style="@style/PatchBoard.FilterChip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="High" />
+                        android:text="@string/priority_high" />
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chipMedium"
                         style="@style/PatchBoard.FilterChip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Medium" />
+                        android:text="@string/priority_medium" />
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chipLow"
                         style="@style/PatchBoard.FilterChip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Low" />
+                        android:text="@string/priority_low" />
                 </com.google.android.material.chip.ChipGroup>
             </HorizontalScrollView>
 
@@ -235,7 +235,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:minHeight="36dp"
-                android:text="⇅ Sort" />
+                android:text="@string/sort_off" />
         </LinearLayout>
     </LinearLayout>
 
@@ -260,7 +260,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="16dp"
-        android:contentDescription="New report"
+        android:contentDescription="@string/cd_new_report"
         android:src="@drawable/ic_add"
         app:backgroundTint="@color/pb_primary"
         app:layout_constraintBottom_toTopOf="@id/bottomNav"

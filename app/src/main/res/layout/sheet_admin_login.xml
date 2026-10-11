@@ -33,7 +33,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Admin Sign In"
+                android:text="@string/admin_sign_in_title"
                 android:textColor="@color/pb_on_surface"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -42,7 +42,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="Administrative access only"
+                android:text="@string/admin_sign_in_subtitle"
                 android:textColor="@color/pb_on_surface_variant"
                 android:textSize="12sp" />
         </LinearLayout>
@@ -74,7 +74,7 @@
             style="@style/PatchBoard.FieldLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="USERNAME" />
+            android:text="@string/label_username" />
 
         <EditText
             android:id="@+id/etUsername"
@@ -82,7 +82,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
-            android:hint="admin"
+            android:hint="@string/hint_username"
             android:importantForAutofill="no"
             android:inputType="textNoSuggestions"
             android:maxLines="1"
@@ -93,7 +93,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="14dp"
-            android:text="PASSWORD" />
+            android:text="@string/label_password" />
 
         <EditText
             android:id="@+id/etPassword"
@@ -101,7 +101,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
-            android:hint="••••••••"
+            android:hint="@string/hint_password"
             android:imeOptions="actionDone"
             android:importantForAutofill="no"
             android:inputType="textPassword"
@@ -118,7 +118,7 @@
             android:paddingTop="9dp"
             android:paddingEnd="12dp"
             android:paddingBottom="9dp"
-            android:text="Incorrect username or password."
+            android:text="@string/error_invalid_login"
             android:textColor="@color/pb_on_error_container"
             android:textSize="12sp"
             android:textStyle="bold"
@@ -130,6 +130,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="14dp"
-            android:text="Sign In" />
+            android:text="@string/action_sign_in" />
     </LinearLayout>
 </LinearLayout>
