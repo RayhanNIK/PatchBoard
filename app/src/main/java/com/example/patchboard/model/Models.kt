@@ -53,7 +53,11 @@ data class ReportCard(
     val createdAt: Long,          // epoch millis
     val imageUri: String? = null, // content:// or file:// URI string
     val resolvedAt: Long? = null,
-)
+    val lat: Double? = null,      // optional map pin
+    val lng: Double? = null,
+) {
+    val hasPin: Boolean get() = lat != null && lng != null
+}
 
 data class Column(val stage: Stage, val cards: List<ReportCard>)
 
