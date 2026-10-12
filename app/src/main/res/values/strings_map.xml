@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Map tab -->
+    <string name="map_title">Map</string>
+    <plurals name="map_pins_count">
+        <item quantity="one">%d report on the map</item>
+        <item quantity="other">%d reports on the map</item>
+    </plurals>
+    <string name="map_empty">No reports have a map pin yet</string>
+    <string name="map_legend_fixed">Faded = fixed</string>
+    <string name="map_selected_meta">%1$s · %2$d upvotes · %3$d comments</string>
+    <string name="map_open_details">View details &amp; comments</string>
+
+    <!-- Pin picker -->
+    <string name="map_pick_title">Pin the location</string>
+    <string name="map_pick_subtitle">Tap the map to drop a pin, drag to adjust</string>
+    <string name="map_pick_hint">Tap the map where the issue is.</string>
+    <string name="map_pin_coords">Pin at %1$.5f, %2$.5f</string>
+    <string name="map_pick_confirm">Use this location</string>
+
+    <!-- New report form -->
+    <string name="label_map_pin">Map pin (optional)</string>
+    <string name="map_add_pin">Add map pin</string>
+    <string name="map_pin_set">Pin set: %1$.4f, %2$.4f (change)</string>
+    <string name="cd_remove_pin">Remove map pin</string>
+
+    <!-- Report card -->
+    <string name="cd_map_pin_preview">Map preview of where this issue is</string>
+</resources>
