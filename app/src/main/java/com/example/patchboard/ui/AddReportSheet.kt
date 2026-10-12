@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.example.patchboard.R
 import com.example.patchboard.databinding.SheetAddReportBinding
+import com.example.patchboard.map.MapPickerDialog
 import com.example.patchboard.model.LocationTag
 import com.example.patchboard.model.Priority
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -40,6 +41,8 @@ class AddReportSheet : BottomSheetDialogFragment() {
     private var priority = Priority.MEDIUM
     private var imageFile: File? = null      // photo attached to this draft
     private var pendingCameraFile: File? = null
+    private var pinLat: Double? = null           // optional map pin
+    private var pinLng: Double? = null
 
     private val locationChips = mutableMapOf<LocationTag, Chip>()
     private val priorityButtons = mutableMapOf<Priority, MaterialButton>()
@@ -63,6 +66,7 @@ class AddReportSheet : BottomSheetDialogFragment() {
             priority = Priority.values().getOrElse(s.getInt(KEY_PRIORITY)) { priority }
             s.getString(KEY_IMAGE)?.let { imageFile = File(it) }
             s.getString(KEY_PENDING)?.let { pendingCameraFile = File(it) }
+            if (s.containsKey(KEY_PIN_LAT)) { pinLat = s.getDouble(KEY_PIN_LAT); pinLng = s.getDouble(KEY_PIN_LNG) }
         }
     }
 
@@ -72,6 +76,8 @@ class AddReportSheet : BottomSheetDialogFragment() {
         outState.putInt(KEY_PRIORITY, priority.ordinal)
         imageFile?.let { outState.putString(KEY_IMAGE, it.absolutePath) }
         pendingCameraFile?.let { outState.putString(KEY_PENDING, it.absolutePath) }
+        val la = pinLat; val ln = pinLng
+        if (la != null && ln != null) { outState.putDouble(KEY_PIN_LAT, la); outState.putDouble(KEY_PIN_LNG, ln) }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, state: Bundle?): View {
@@ -108,9 +114,21 @@ class AddReportSheet : BottomSheetDialogFragment() {
         b.btnRemovePhoto.setOnClickListener { removeImage() }
         b.btnSubmit.setOnClickListener { submit() }
 
+        // Map pin (optional): the picker sends its result through the activity's FragmentManager.
+        b.btnPin.setOnClickListener {
+            MapPickerDialog.newInstance(pinLat, pinLng, priority.ordinal).show(parentFragmentManager, "pin")
+        }
+        b.btnRemovePin.setOnClickListener { pinLat = null; pinLng = null; renderPin() }
+        parentFragmentManager.setFragmentResultListener(MapPickerDialog.RESULT_KEY, viewLifecycleOwner) { _, r ->
+            pinLat = r.getDouble(MapPickerDialog.KEY_LAT)
+            pinLng = r.getDouble(MapPickerDialog.KEY_LNG)
+            renderPin()
+        }
+
         renderLocation()
         renderPriority()
         renderPhoto()
+        renderPin()
         updateSubmit()
     }
 
@@ -226,6 +244,14 @@ class AddReportSheet : BottomSheetDialogFragment() {
         }
     }
 
+    // ── Map pin ──────────────────────────────────────────────────────────────
+    private fun renderPin() {
+        val la = pinLat; val ln = pinLng
+        b.btnPin.text = if (la != null && ln != null) getString(R.string.map_pin_set, la, ln)
+        else getString(R.string.map_add_pin)
+        b.btnRemovePin.visibility = if (la != null) View.VISIBLE else View.GONE
+    }
+
     // ── Submit ───────────────────────────────────────────────────────────────
     private fun updateSubmit() {
         b.btnSubmit.isEnabled = b.etTitle.text.toString().isNotBlank()
@@ -240,6 +266,8 @@ class AddReportSheet : BottomSheetDialogFragment() {
             description = b.etDescription.text.toString(),
             priority = priority,
             imageUri = imageFile?.let { Uri.fromFile(it).toString() },
+            lat = pinLat,
+            lng = pinLng,
         )
         imageFile = null // ownership moved to the new report; don't delete on dismiss
         dismiss()
@@ -261,5 +289,7 @@ class AddReportSheet : BottomSheetDialogFragment() {
         const val KEY_PRIORITY = "priority"
         const val KEY_IMAGE = "image"
         const val KEY_PENDING = "pending"
+        const val KEY_PIN_LAT = "pin_lat"
+        const val KEY_PIN_LNG = "pin_lng"
     }
 }
