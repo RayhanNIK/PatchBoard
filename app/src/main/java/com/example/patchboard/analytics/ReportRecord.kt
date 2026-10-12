@@ -20,6 +20,11 @@ data class ReportRecord(
     val resolvedAt: Long?,
     val upvotes: Int,
     val commentCount: Int,
+    /** For the Map tab. Both null when the reporter did not drop a pin. */
+    val title: String = "",
+    val lat: Double? = null,
+    val lng: Double? = null,
 ) {
+    val hasPin: Boolean get() = lat != null && lng != null
     val isFixed: Boolean get() = stage == Stage.FIXED
 }
