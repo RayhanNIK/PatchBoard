@@ -17,6 +17,10 @@
             </intent-filter>
         </activity>
 
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${MAPS_API_KEY}"/>
+
         <!-- Lets the camera app write a photo into app-private storage -->
         <provider
             android:name="androidx.core.content.FileProvider"
