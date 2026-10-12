@@ -2,6 +2,7 @@ package com.example.patchboard.data
 
 import com.example.patchboard.model.*
 import com.example.patchboard.model.LocationTag.*
+import com.example.patchboard.map.MapDefaults
 import com.example.patchboard.model.Priority.*
 import java.util.Calendar
 
@@ -26,7 +27,29 @@ object SeedData {
         return Comment(id, author, text, cal.timeInMillis)
     }
 
-    fun columns(): List<Column> = listOf(
+    /**
+     * Demo pins: each location tag gets a spot around [MapDefaults] (the campus centre), with a
+     * little per-report offset. Replace with real coordinates for your school.
+     */
+    private fun withPin(card: ReportCard): ReportCard {
+        val (dLat, dLng) = when (card.location) {
+            IT_LAB -> 0.0004 to -0.0004
+            LIBRARY -> 0.0002 to 0.0005
+            CAFETERIA -> -0.0003 to 0.0003
+            GYM -> -0.0006 to -0.0005
+            LECTURE_HALL -> 0.0007 to 0.0001
+            RESTROOM -> 0.0 to -0.0009
+        }
+        val jitter = (card.id % 4) * 0.00004
+        return card.copy(
+            lat = MapDefaults.CAMPUS_LAT + dLat + jitter,
+            lng = MapDefaults.CAMPUS_LNG + dLng - jitter,
+        )
+    }
+
+    fun columns(): List<Column> = raw().map { col -> col.copy(cards = col.cards.map(::withPin)) }
+
+    private fun raw(): List<Column> = listOf(
         Column(Stage.REPORTED, listOf(
             ReportCard(1, IT_LAB, "Projector Not Working",
                 "Projector in Lab 3B fails to display HDMI input from any laptop.",
