@@ -28,6 +28,7 @@ class BoardViewModel : ViewModel() {
     var searchQuery: String = ""; private set
     var priorityFilter: Priority? = null; private set   // null = "All"
     var sortMode: SortMode = SortMode.OFF; private set
+    var locationFilter: LocationTag? = null; private set  // null = all locations
 
     // ── Observation ──────────────────────────────────────────────────────────
     /** Calls [onChange] immediately and after every state change until [owner] is destroyed. */
@@ -58,7 +59,8 @@ class BoardViewModel : ViewModel() {
     fun visibleColumns(): List<Column> = columns.map { col ->
         var cards = col.cards.filter {
             matchesSearch(it, normalizedQuery) &&
-                    (priorityFilter == null || it.priority == priorityFilter)
+                    (priorityFilter == null || it.priority == priorityFilter) &&
+                    (locationFilter == null || it.location == locationFilter)
         }
         cards = when (sortMode) {
             SortMode.OFF -> cards
@@ -89,11 +91,13 @@ class BoardViewModel : ViewModel() {
     fun addReport(
         location: LocationTag, title: String, description: String,
         priority: Priority, imageUri: String?,
+        lat: Double? = null, lng: Double? = null,
     ) {
         val card = ReportCard(
             id = nextId++, location = location, title = title.trim(),
             description = description.trim(), priority = priority, upvotes = 0,
             comments = emptyList(), createdAt = System.currentTimeMillis(), imageUri = imageUri,
+            lat = lat, lng = lng,
         )
         columns = columns.mapIndexed { i, col -> if (i == 0) col.copy(cards = listOf(card) + col.cards) else col }
         notifyChanged()
@@ -144,6 +148,8 @@ class BoardViewModel : ViewModel() {
 
     // ── Toolbar state ────────────────────────────────────────────────────────
     fun setPriorityFilter(p: Priority?) { priorityFilter = p; notifyChanged() }
+
+    fun setLocationFilter(l: LocationTag?) { locationFilter = l; notifyChanged() }
 
     /** off → most upvotes first → fewest first → off */
     fun cycleSort() {
