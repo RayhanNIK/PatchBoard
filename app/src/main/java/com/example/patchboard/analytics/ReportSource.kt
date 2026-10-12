@@ -63,5 +63,8 @@ private fun ReportCard.toRecord(stage: Stage, now: Long): ReportRecord {
         resolvedAt = resolved,
         upvotes = upvotes,
         commentCount = comments.size,
+        title = title,
+        lat = lat,
+        lng = lng,
     )
 }

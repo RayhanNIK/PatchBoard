@@ -20,6 +20,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.patchboard.analytics.AnalyticsFragment
 import com.example.patchboard.databinding.ActivityMainBinding
+import com.example.patchboard.map.MapFragment
+import com.example.patchboard.model.LocationTag
 import com.example.patchboard.model.Priority
 import com.example.patchboard.model.SortMode
 import com.example.patchboard.ui.AddReportSheet
@@ -30,6 +32,7 @@ import com.example.patchboard.ui.ColumnAdapter
 import com.example.patchboard.ui.CommentsSheet
 import com.example.patchboard.ui.ImageViewer
 import com.example.patchboard.ui.color
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class MainActivity : AppCompatActivity(), CardActions {
 
@@ -46,9 +49,11 @@ class MainActivity : AppCompatActivity(), CardActions {
         override fun handleOnBackPressed() = vm.setSearchOpen(false)
     }
 
-    private val closeReportsOnBack = object : OnBackPressedCallback(false) {
+    private var pendingMapFocus = -1   // report to zoom to when the Map tab opens
+
+    private val closePageOnBack = object : OnBackPressedCallback(false) {
         override fun handleOnBackPressed() {
-            showReportsPage(false)
+            showPage(null)
             binding.bottomNav.selectedItemId = R.id.nav_board
         }
     }
@@ -75,7 +80,7 @@ class MainActivity : AppCompatActivity(), CardActions {
         }
 
         onBackPressedDispatcher.addCallback(this, closeSearchOnBack)
-        onBackPressedDispatcher.addCallback(this, closeReportsOnBack) // added last = checked first
+        onBackPressedDispatcher.addCallback(this, closePageOnBack) // added last = checked first
 
         setupBoard()
         setupTopBar()
@@ -119,15 +124,32 @@ class MainActivity : AppCompatActivity(), CardActions {
             binding.chipLow to Priority.LOW,
         ).forEach { (chip, priority) -> chip.setOnClickListener { vm.setPriorityFilter(priority) } }
         binding.btnSort.setOnClickListener { vm.cycleSort() }
+        binding.btnLocation.setOnClickListener { showLocationPicker() }
+    }
+
+    /** Single-choice dialog built in code, so no new layout is needed. */
+    private fun showLocationPicker() {
+        val locations = LocationTag.values()
+        val items = arrayOf(getString(R.string.filter_location_all)) + locations.map { it.tag }
+        val checked = vm.locationFilter?.let { locations.indexOf(it) + 1 } ?: 0
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.filter_location_title)
+            .setSingleChoiceItems(items, checked) { dialog, which ->
+                vm.setLocationFilter(if (which == 0) null else locations[which - 1])
+                dialog.dismiss()
+            }
+            .setNegativeButton(R.string.action_cancel, null)
+            .show()
     }
 
     private fun setupBottomNav() {
         binding.bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.nav_board -> { showReportsPage(false); true }
-                R.id.nav_reports -> { showReportsPage(true); true }
+                R.id.nav_board -> { showPage(null); true }
+                R.id.nav_reports -> { showPage(PAGE_REPORTS); true }
+                R.id.nav_map -> { showPage(PAGE_MAP); true }
                 else -> {
-                    // Map / Profile are placeholders in the prototype too.
+                    // Profile is still a placeholder.
                     Toast.makeText(this, R.string.coming_soon, Toast.LENGTH_SHORT).show()
                     false
                 }
@@ -178,6 +200,15 @@ class MainActivity : AppCompatActivity(), CardActions {
         binding.chipMedium.isChecked = vm.priorityFilter == Priority.MEDIUM
         binding.chipLow.isChecked = vm.priorityFilter == Priority.LOW
 
+        // Location button: highlighted while a location is selected
+        val locFiltered = vm.locationFilter != null
+        binding.btnLocation.text = vm.locationFilter?.tag ?: getString(R.string.filter_location_all)
+        binding.btnLocation.backgroundTintList =
+            ColorStateList.valueOf(if (locFiltered) color(R.color.pb_primary) else android.graphics.Color.TRANSPARENT)
+        binding.btnLocation.strokeColor =
+            ColorStateList.valueOf(color(if (locFiltered) R.color.pb_primary else R.color.pb_outline))
+        binding.btnLocation.setTextColor(color(if (locFiltered) R.color.pb_on_primary else R.color.pb_on_surface_variant))
+
         // Sort button: ⇅ (off) → ↑ most upvotes → ↓ fewest upvotes
         val sorted = vm.sortMode != SortMode.OFF
         binding.btnSort.text = when (vm.sortMode) {
@@ -192,21 +223,43 @@ class MainActivity : AppCompatActivity(), CardActions {
         binding.btnSort.setTextColor(color(if (sorted) R.color.pb_on_primary else R.color.pb_on_surface_variant))
     }
 
-    private fun showReportsPage(show: Boolean) {
-        if (show && supportFragmentManager.findFragmentByTag("analytics") == null) {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.pageContainer, AnalyticsFragment.newInstance(), "analytics")
-                .commit()
+    /**
+     * Shows a full-screen page (Reports, Map) over the board, or the board itself when [tag] is null.
+     * Leaving a page removes its fragment, so the map is not kept alive in the background.
+     */
+    private fun showPage(tag: String?) {
+        val fm = supportFragmentManager
+        val current = fm.findFragmentById(R.id.pageContainer)
+        if (tag == null) {
+            if (current != null) fm.beginTransaction().remove(current).commit()
+        } else if (current?.tag != tag) {
+            val page = when (tag) {
+                PAGE_MAP -> MapFragment.newInstance(focusReportId = pendingMapFocus).also { pendingMapFocus = -1 }
+                else -> AnalyticsFragment.newInstance()
+            }
+            fm.beginTransaction().replace(R.id.pageContainer, page, tag).commit()
         }
-        binding.pageContainer.isVisible = show
-        closeReportsOnBack.isEnabled = show
-        if (show && vm.searchOpen) vm.setSearchOpen(false)
+        binding.pageContainer.isVisible = tag != null
+        closePageOnBack.isEnabled = tag != null
+        if (tag != null && vm.searchOpen) vm.setSearchOpen(false)
+    }
+
+    /** Opens the Map tab zoomed on one report (call this from a report card). */
+    fun focusOnMap(reportId: Int) {
+        pendingMapFocus = reportId
+        binding.bottomNav.selectedItemId = R.id.nav_map
     }
 
     // The nav bar restores its selected tab after onCreate; make the page match it.
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        showReportsPage(binding.bottomNav.selectedItemId == R.id.nav_reports)
+        showPage(
+            when (binding.bottomNav.selectedItemId) {
+                R.id.nav_reports -> PAGE_REPORTS
+                R.id.nav_map -> PAGE_MAP
+                else -> null
+            }
+        )
     }
 
     // ── CardActions ──────────────────────────────────────────────────────────
@@ -218,4 +271,9 @@ class MainActivity : AppCompatActivity(), CardActions {
     override fun onMove(cardId: Int, forward: Boolean) = vm.moveCard(cardId, forward)
 
     override fun onOpenImage(uri: String) = ImageViewer.show(this, uri)
+
+    private companion object {
+        const val PAGE_REPORTS = "analytics"
+        const val PAGE_MAP = "map"
+    }
 }

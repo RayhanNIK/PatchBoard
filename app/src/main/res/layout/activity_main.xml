@@ -229,6 +229,15 @@
             </HorizontalScrollView>
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnLocation"
+                style="@style/PatchBoard.PillButton.Outlined"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:minHeight="36dp"
+                android:text="@string/filter_location_all" />
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSort"
                 style="@style/PatchBoard.PillButton.Outlined"
                 android:layout_width="wrap_content"
