@@ -195,6 +195,43 @@
                     app:icon="@drawable/ic_image" />
             </LinearLayout>
 
+            <!-- Map pin (optional) -->
+            <TextView
+                style="@style/PatchBoard.FieldLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:text="@string/label_map_pin" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnPin"
+                    style="@style/PatchBoard.PhotoButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/map_add_pin"
+                    app:icon="@drawable/ic_map" />
+
+                <ImageButton
+                    android:id="@+id/btnRemovePin"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_circle_close"
+                    android:contentDescription="@string/cd_remove_pin"
+                    android:padding="11dp"
+                    android:src="@drawable/ic_close"
+                    android:visibility="gone"
+                    app:tint="@color/pb_on_surface" />
+            </LinearLayout>
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSubmit"
                 style="@style/PatchBoard.PrimaryButton"
