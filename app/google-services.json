@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "938330204680",
+    "project_id": "patchboard-b1ef7",
+    "storage_bucket": "patchboard-b1ef7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:938330204680:android:a3be7609ae4764ca927fbd",
+        "android_client_info": {
+          "package_name": "com.example.patchboard"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "938330204680-7dmpk1ktb2iu5mffcmir0b3vprp91bjj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.patchboard",
+            "certificate_hash": "7152672d675cec6e8f1b84fc4d45e6e79c905d4d"
+          }
+        },
+        {
+          "client_id": "938330204680-bc7vh9d1balddiiant2t44ug185u2kqq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBpTpikQ-h9rG396RPOtl4yV8up-w8D24U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "938330204680-bc7vh9d1balddiiant2t44ug185u2kqq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
