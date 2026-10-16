@@ -40,6 +40,8 @@ data class Comment(
     val text: String,
     val createdAt: Long,          // epoch millis
     val isEdited: Boolean = false,
+    val authorId: String? = null,   // account id of the writer (null = seed/demo data)
+    val byAdmin: Boolean = false,   // written while the poster was in admin mode
 )
 
 data class ReportCard(
@@ -55,6 +57,8 @@ data class ReportCard(
     val resolvedAt: Long? = null,
     val lat: Double? = null,      // optional map pin
     val lng: Double? = null,
+    val authorId: String? = null,   // account id of the reporter (null = seed/demo data)
+    val authorName: String? = null, // shown on the card as "by <name>"
 ) {
     val hasPin: Boolean get() = lat != null && lng != null
 }
