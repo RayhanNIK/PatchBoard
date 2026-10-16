@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="profile_edit_name">Edit username</string>
+    <string name="profile_edit_title">Change your username</string>
+    <string name="profile_save">Save</string>
+    <string name="profile_name_saved">Username updated</string>
+</resources>
