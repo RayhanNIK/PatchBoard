@@ -64,10 +64,21 @@
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/tvAuthor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/pb_on_surface_variant"
+            android:textSize="10.5sp"
+            android:textStyle="bold" />
+
+        <TextView
             android:id="@+id/tvDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="9dp"
+            android:layout_marginTop="7dp"
             android:ellipsize="end"
             android:lineSpacingMultiplier="1.2"
             android:maxLines="2"

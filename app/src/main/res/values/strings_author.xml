@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="badge_author">Author</string>
+    <string name="badge_admin">Admin</string>
+    <string name="badge_admin_author">Admin · Author</string>
+    <string name="card_by_author">by %1$s</string>
+    <string name="author_unknown">Unknown</string>
+    <string name="cd_view_comments">View comments: %1$d</string>
+    <string name="cd_upvote_count">Upvote: %1$d</string>
+    <plurals name="comment_count">
+        <item quantity="one">%1$d comment</item>
+        <item quantity="other">%1$d comments</item>
+    </plurals>
+</resources>

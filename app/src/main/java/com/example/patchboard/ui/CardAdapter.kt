@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.patchboard.R
 import com.example.patchboard.databinding.ItemCardBinding
 import com.example.patchboard.model.ReportCard
 import com.example.patchboard.model.Stage
@@ -46,6 +47,7 @@ class CardAdapter(private val actions: CardActions) :
         b.tvLocation.bindLocationTag(card.location)
         b.tvCreated.bindCreatedTime(card.createdAt)
         b.tvTitle.text = card.title
+        b.tvAuthor.text = b.root.context.getString(R.string.card_by_author, card.authorName ?: b.root.context.getString(R.string.author_unknown))
         b.tvDescription.text = card.description
         b.tvPriority.bindPriority(card.priority)
 
@@ -74,11 +76,11 @@ class CardAdapter(private val actions: CardActions) :
 
         // Footer
         b.btnComments.text = card.comments.size.toString()
-        b.btnComments.contentDescription = "View comments: ${card.comments.size}"
+        b.btnComments.contentDescription = b.root.context.getString(R.string.cd_view_comments, card.comments.size)
         b.btnComments.setOnClickListener { actions.onOpenComments(card.id) }
 
         b.btnUpvote.text = card.upvotes.toString()
-        b.btnUpvote.contentDescription = "Upvote: ${card.upvotes}"
+        b.btnUpvote.contentDescription = b.root.context.getString(R.string.cd_upvote_count, card.upvotes)
         b.btnUpvote.setOnClickListener { if (!isFixed) actions.onUpvote(card.id) }
     }
 
