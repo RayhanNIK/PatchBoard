@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Sign in / sign up -->
+    <string name="auth_title_sign_in">Welcome back</string>
+    <string name="auth_title_sign_up">Create your account</string>
+    <string name="auth_subtitle_sign_in">Sign in to report and follow campus issues.</string>
+    <string name="auth_subtitle_sign_up">Use your name so people know who reported what.</string>
+    <string name="auth_label_name">Full name</string>
+    <string name="auth_label_email">Email</string>
+    <string name="auth_label_password">Password</string>
+    <string name="auth_hint_name">e.g. Rere Santoso</string>
+    <string name="auth_hint_email">you@school.edu</string>
+    <string name="auth_hint_password">At least 6 characters</string>
+    <string name="auth_action_sign_in">Sign in</string>
+    <string name="auth_action_sign_up">Create account</string>
+    <string name="auth_action_google">Continue with Google</string>
+    <string name="auth_or">or</string>
+    <string name="auth_forgot">Forgot password?</string>
+    <string name="auth_toggle_to_sign_up">New here? Create an account</string>
+    <string name="auth_toggle_to_sign_in">Already have an account? Sign in</string>
+    <string name="cd_toggle_password">Show or hide password</string>
+
+    <!-- Messages -->
+    <string name="auth_err_name">Enter your name (2–40 characters).</string>
+    <string name="auth_err_email">Enter a valid email address.</string>
+    <string name="auth_err_password_empty">Enter your password.</string>
+    <string name="auth_err_password_short">Use at least 6 characters.</string>
+    <string name="auth_err_credentials">Wrong email or password.</string>
+    <string name="auth_err_email_in_use">An account with this email already exists. Try signing in.</string>
+    <string name="auth_err_weak_password">That password is too weak. Try a longer one.</string>
+    <string name="auth_err_network">No connection. Check your internet and try again.</string>
+    <string name="auth_err_too_many">Too many attempts. Wait a moment and try again.</string>
+    <string name="auth_err_no_google">No Google account found on this device. Add one in Settings, then try again.</string>
+    <string name="auth_err_not_configured">Google sign-in is not set up yet. Enable it in the Firebase console and download google-services.json again.</string>
+    <string name="auth_err_unknown">Something went wrong. Please try again.</string>
+    <string name="auth_reset_enter_email">Type your email above first, then tap Forgot password.</string>
+    <string name="auth_reset_sent">If an account exists for that email, a reset link is on its way.</string>
+
+    <!-- Profile tab -->
+    <string name="profile_title">Profile</string>
+    <string name="profile_subtitle">Your account</string>
+    <string name="profile_sign_out">Sign out</string>
+    <string name="profile_signed_out_hint">You are signed out.</string>
+</resources>
