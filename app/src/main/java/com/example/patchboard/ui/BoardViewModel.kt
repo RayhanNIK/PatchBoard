@@ -22,7 +22,8 @@ class BoardViewModel : ViewModel() {
     private var nextId = 100
     private val listeners = mutableListOf<() -> Unit>()
 
-    var currentUser: String = "Rere"; private set
+    var currentUser: String = ""; private set            // display name of the signed-in account
+    var currentUserId: String? = null; private set       // account id (ownership is decided by this)
     var isAdmin: Boolean = false; private set
     var searchOpen: Boolean = false; private set
     var searchQuery: String = ""; private set
@@ -50,6 +51,7 @@ class BoardViewModel : ViewModel() {
         val fields = buildList {
             add(card.title); add(card.description)
             add(card.location.tag); add(card.priority.label)
+            card.authorName?.let { add(it) }
             card.comments.forEach { add(it.author); add(it.text) }
         }
         return fields.any { it.lowercase().contains(q) }
@@ -98,6 +100,7 @@ class BoardViewModel : ViewModel() {
             description = description.trim(), priority = priority, upvotes = 0,
             comments = emptyList(), createdAt = System.currentTimeMillis(), imageUri = imageUri,
             lat = lat, lng = lng,
+            authorId = currentUserId, authorName = currentUser.ifBlank { null },
         )
         columns = columns.mapIndexed { i, col -> if (i == 0) col.copy(cards = listOf(card) + col.cards) else col }
         notifyChanged()
@@ -127,7 +130,10 @@ class BoardViewModel : ViewModel() {
 
     // ── Comments ─────────────────────────────────────────────────────────────
     fun addComment(cardId: Int, text: String) {
-        val comment = Comment("$cardId-${System.currentTimeMillis()}", currentUser, text, System.currentTimeMillis())
+        val comment = Comment(
+            id = "$cardId-${System.currentTimeMillis()}", author = currentUser, text = text,
+            createdAt = System.currentTimeMillis(), authorId = currentUserId, byAdmin = isAdmin,
+        )
         updateCard(cardId) { it.copy(comments = it.comments + comment) }
     }
 
@@ -141,9 +147,27 @@ class BoardViewModel : ViewModel() {
             })
         }
 
-    fun changeUser(name: String) {
+    /**
+     * Called when the signed-in account changes (sign-in, rename). Past reports and comments written by
+     * this account are re-labelled so a rename shows up everywhere. Pass null to clear on sign-out.
+     */
+    fun setAccount(id: String?, name: String) {
         val trimmed = name.trim()
-        if (trimmed.isNotEmpty()) { currentUser = trimmed; notifyChanged() }
+        currentUserId = id
+        currentUser = trimmed
+        if (id != null && trimmed.isNotEmpty()) {
+            columns = columns.map { col ->
+                col.copy(cards = col.cards.map { card ->
+                    card.copy(
+                        authorName = if (card.authorId == id) trimmed else card.authorName,
+                        comments = card.comments.map { c ->
+                            if (c.authorId == id && c.author != trimmed) c.copy(author = trimmed) else c
+                        },
+                    )
+                })
+            }
+        }
+        notifyChanged()
     }
 
     // ── Toolbar state ────────────────────────────────────────────────────────
@@ -176,7 +200,10 @@ class BoardViewModel : ViewModel() {
         return ok
     }
 
-    fun signOut() { isAdmin = false; notifyChanged() }
+    fun signOut() { isAdmin = false; notifyChanged() }   // leaves admin mode only; the account stays
+
+    /** Account signed out: forget who is posting and drop admin mode. */
+    fun clearAccount() { isAdmin = false; currentUserId = null; currentUser = ""; notifyChanged() }
 
     fun snapshot(): List<Column> = columns.map { it.copy(cards = it.cards.toList()) }
 }
