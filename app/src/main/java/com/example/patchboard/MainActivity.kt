@@ -19,11 +19,15 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.patchboard.analytics.AnalyticsFragment
+import com.example.patchboard.auth.AccountUser
+import com.example.patchboard.auth.AuthFragment
+import com.example.patchboard.auth.AuthProvider
 import com.example.patchboard.databinding.ActivityMainBinding
 import com.example.patchboard.map.MapFragment
 import com.example.patchboard.model.LocationTag
 import com.example.patchboard.model.Priority
 import com.example.patchboard.model.SortMode
+import com.example.patchboard.profile.ProfileFragment
 import com.example.patchboard.ui.AddReportSheet
 import com.example.patchboard.ui.AdminLoginSheet
 import com.example.patchboard.ui.BoardViewModel
@@ -89,6 +93,39 @@ class MainActivity : AppCompatActivity(), CardActions {
         binding.fab.setOnClickListener { AddReportSheet().show(supportFragmentManager, "add") }
 
         vm.observe(this) { render() }
+
+        // Accounts: nobody gets past the sign-in screen until they have signed in or signed up.
+        showAuth(AuthProvider.get().currentUser == null)        // no flash of the board for signed-out users
+        AuthProvider.get().addListener(this) { onAccountChanged(it) }
+    }
+
+    // ── Accounts ─────────────────────────────────────────────────────────────
+    private fun onAccountChanged(user: AccountUser?) {
+        if (user == null) {
+            vm.clearAccount()                                    // forget the poster and drop admin mode
+            showPage(null)
+            binding.bottomNav.selectedItemId = R.id.nav_board
+            showAuth(true)
+        } else {
+            vm.setAccount(user.id, user.displayName)             // reports / comments are stamped with the account; renames propagate
+            showAuth(false)
+        }
+    }
+
+    /** Full-screen sign-in layer above everything (including the bottom nav). */
+    private fun showAuth(show: Boolean) {
+        val fm = supportFragmentManager
+        val current = fm.findFragmentById(R.id.authContainer)
+        if (show && current == null) {
+            fm.beginTransaction().replace(R.id.authContainer, AuthFragment(), "auth").commit()
+        } else if (!show && current != null) {
+            fm.beginTransaction().remove(current).commit()
+        }
+        binding.authContainer.isVisible = show
+        if (!show) {
+            val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(binding.root.windowToken, 0)
+        }
     }
 
     // ── Setup ────────────────────────────────────────────────────────────────
@@ -148,8 +185,9 @@ class MainActivity : AppCompatActivity(), CardActions {
                 R.id.nav_board -> { showPage(null); true }
                 R.id.nav_reports -> { showPage(PAGE_REPORTS); true }
                 R.id.nav_map -> { showPage(PAGE_MAP); true }
+                R.id.nav_profile -> { showPage(PAGE_PROFILE); true }
                 else -> {
-                    // Profile is still a placeholder.
+                    // Unknown tab: placeholder.
                     Toast.makeText(this, R.string.coming_soon, Toast.LENGTH_SHORT).show()
                     false
                 }
@@ -235,6 +273,7 @@ class MainActivity : AppCompatActivity(), CardActions {
         } else if (current?.tag != tag) {
             val page = when (tag) {
                 PAGE_MAP -> MapFragment.newInstance(focusReportId = pendingMapFocus).also { pendingMapFocus = -1 }
+                PAGE_PROFILE -> ProfileFragment()
                 else -> AnalyticsFragment.newInstance()
             }
             fm.beginTransaction().replace(R.id.pageContainer, page, tag).commit()
@@ -257,6 +296,7 @@ class MainActivity : AppCompatActivity(), CardActions {
             when (binding.bottomNav.selectedItemId) {
                 R.id.nav_reports -> PAGE_REPORTS
                 R.id.nav_map -> PAGE_MAP
+                R.id.nav_profile -> PAGE_PROFILE
                 else -> null
             }
         )
@@ -275,5 +315,6 @@ class MainActivity : AppCompatActivity(), CardActions {
     private companion object {
         const val PAGE_REPORTS = "analytics"
         const val PAGE_MAP = "map"
+        const val PAGE_PROFILE = "profile"
     }
 }
