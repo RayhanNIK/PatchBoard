@@ -1,16 +1,13 @@
 package com.example.patchboard.ui
 
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.view.inputmethod.EditorInfo
 import android.widget.FrameLayout
 import android.annotation.SuppressLint
 import android.view.MotionEvent
-import androidx.core.text.HtmlCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.updatePadding
 import androidx.core.widget.doAfterTextChanged
@@ -30,7 +27,6 @@ class CommentsSheet : BottomSheetDialogFragment() {
     private lateinit var vm: BoardViewModel
     private lateinit var adapter: CommentAdapter
     private var cardId = -1
-    private var editingUser = false
     private var lastCommentCount = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -93,19 +89,6 @@ class CommentsSheet : BottomSheetDialogFragment() {
 
         b.btnSend.setOnClickListener { send() }
 
-        // "Posting as" switcher
-        b.btnChangeUser.setOnClickListener {
-            editingUser = true
-            b.etUserName.setText(vm.currentUser)
-            b.etUserName.setSelection(b.etUserName.text.length)
-            renderUserRow()
-            b.etUserName.requestFocus()
-        }
-        b.btnUserOk.setOnClickListener { saveUser() }
-        b.etUserName.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) { saveUser(); true } else false
-        }
-
         vm.observe(viewLifecycleOwner) { render() }
     }
 
@@ -116,23 +99,16 @@ class CommentsSheet : BottomSheetDialogFragment() {
         b.etComment.setText("")
     }
 
-    private fun saveUser() {
-        vm.changeUser(b.etUserName.text.toString())
-        editingUser = false
-        renderUserRow()
-    }
-
     private fun render() {
         val card = vm.findCard(cardId)
         if (card == null) { dismiss(); return }
-        val ctx = requireContext()
 
         b.tvLocation.bindLocationTag(card.location)
         b.tvTitle.text = card.title
         val n = card.comments.size
-        b.tvCount.text = "$n comment${if (n != 1) "s" else ""}"
+        b.tvCount.text = resources.getQuantityString(R.plurals.comment_count, n, n)
 
-        adapter.update(card.comments, vm.currentUser)
+        adapter.update(card.comments, vm.currentUserId, card.authorId, card.authorName)
         b.emptyState.visibility = if (n == 0) View.VISIBLE else View.GONE
         if (n > lastCommentCount && n > 0 && lastCommentCount != -1) {
             b.commentsRecycler.scrollToPosition(n - 1) // newest comment into view
@@ -141,19 +117,8 @@ class CommentsSheet : BottomSheetDialogFragment() {
         }
         lastCommentCount = n
 
-        b.tvUserAvatar.bindAvatar(vm.currentUser, 26)
         b.tvInputAvatar.bindAvatar(vm.currentUser, 30)
-        renderUserRow()
         updateSendButton()
-    }
-
-    private fun renderUserRow() {
-        b.userView.visibility = if (editingUser) View.GONE else View.VISIBLE
-        b.userEdit.visibility = if (editingUser) View.VISIBLE else View.GONE
-        b.tvPostingAs.text = HtmlCompat.fromHtml(
-            "Posting as <b>${TextUtils.htmlEncode(vm.currentUser)}</b>",
-            HtmlCompat.FROM_HTML_MODE_LEGACY,
-        )
     }
 
     private fun updateSendButton() {
