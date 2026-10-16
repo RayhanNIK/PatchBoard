@@ -47,7 +47,13 @@ object SeedData {
         )
     }
 
-    fun columns(): List<Column> = raw().map { col -> col.copy(cards = col.cards.map(::withPin)) }
+    private val demoAuthors = listOf("Rere", "James K.", "Priya S.", "Marcus T.", "Elena V.")
+
+    /** Seed reports get a demo author so cards show "by …" (no account id, so nobody can claim them). */
+    private fun withAuthor(card: ReportCard) = card.copy(authorName = demoAuthors[card.id % demoAuthors.size])
+
+    fun columns(): List<Column> =
+        raw().map { col -> col.copy(cards = col.cards.map { withAuthor(withPin(it)) }) }
 
     private fun raw(): List<Column> = listOf(
         Column(Stage.REPORTED, listOf(
