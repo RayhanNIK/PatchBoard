@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity(), CardActions {
     private lateinit var vm: BoardViewModel
     private val columnAdapter = ColumnAdapter(this)
     private var lastSearchOpen = false
-
+    private var lastFocusToken = 0
     private val isNight: Boolean
         get() = (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
                 Configuration.UI_MODE_NIGHT_YES
@@ -197,8 +197,11 @@ class MainActivity : AppCompatActivity(), CardActions {
 
     // ── Render (called on every state change) ────────────────────────────────
     private fun render() {
-        columnAdapter.submit(vm.visibleColumns(), vm.isAdmin)
-
+        columnAdapter.submit(vm.visibleColumns(), vm.isAdmin, vm.viewKey, vm.focusToken, vm.focusColumn)
+        if (vm.focusToken != lastFocusToken) {
+            lastFocusToken = vm.focusToken
+            binding.boardRecycler.smoothScrollToPosition(vm.focusColumn)
+        }
         // Theme icon
         binding.btnTheme.setImageResource(if (isNight) R.drawable.ic_light_mode else R.drawable.ic_dark_mode)
 

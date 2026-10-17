@@ -8,14 +8,22 @@ import com.example.patchboard.R
 import com.example.patchboard.databinding.ItemColumnBinding
 import com.example.patchboard.model.Column
 
-/** Outer horizontal list: one kanban column per workflow stage, each with its own vertical card list. */
 class ColumnAdapter(private val actions: CardActions) : RecyclerView.Adapter<ColumnAdapter.VH>() {
 
     private var columns: List<Column> = emptyList()
     private var isAdmin = false
 
-    fun submit(columns: List<Column>, isAdmin: Boolean) {
+    private var viewKey: Any? = null
+    private var focusToken = 0
+    private var focusColumn = 0
+    private var addEpoch = 0
+
+    private var scrollEpoch = 0
+
+    fun submit(columns: List<Column>, isAdmin: Boolean, viewKey: Any?, focusToken: Int, focusColumn: Int) {
         val firstLoad = this.columns.isEmpty()
+        if (viewKey != this.viewKey) { this.viewKey = viewKey; scrollEpoch++ }
+        if (focusToken != this.focusToken) { this.focusToken = focusToken; this.focusColumn = focusColumn; addEpoch++ }
         this.columns = columns
         this.isAdmin = isAdmin
         if (firstLoad) notifyDataSetChanged() else notifyItemRangeChanged(0, columns.size)
@@ -23,6 +31,10 @@ class ColumnAdapter(private val actions: CardActions) : RecyclerView.Adapter<Col
 
     inner class VH(val b: ItemColumnBinding) : RecyclerView.ViewHolder(b.root) {
         val cardAdapter = CardAdapter(actions)
+
+        var seenEpoch = -1
+        var seenAddEpoch = -1
+
 
         init {
             b.cardsRecycler.layoutManager = LinearLayoutManager(b.root.context)
@@ -45,6 +57,14 @@ class ColumnAdapter(private val actions: CardActions) : RecyclerView.Adapter<Col
         holder.b.tvColumnTitle.text = col.stage.title
         holder.b.tvCount.text = col.cards.size.toString()
         holder.cardAdapter.configure(col.stage, isAdmin)
-        holder.cardAdapter.submitList(col.cards)
+
+        val viewJump = holder.seenEpoch != scrollEpoch
+        val addJump = holder.seenAddEpoch != addEpoch
+        holder.seenEpoch = scrollEpoch
+        holder.seenAddEpoch = addEpoch
+        val jump = viewJump || (position == focusColumn && addJump)    // a new report only moves the first column
+        holder.cardAdapter.submitList(col.cards) {
+            if (jump) holder.b.cardsRecycler.scrollToPosition(0)
+        }
     }
 }

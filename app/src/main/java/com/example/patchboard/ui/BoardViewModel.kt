@@ -30,6 +30,11 @@ class BoardViewModel : ViewModel() {
     var priorityFilter: Priority? = null; private set   // null = "All"
     var sortMode: SortMode = SortMode.OFF; private set
     var locationFilter: LocationTag? = null; private set  // null = all locations
+    var focusToken: Int = 0; private set
+    var focusColumn: Int = 0; private set
+    val viewKey: List<Any?> get() = listOf(sortMode, priorityFilter, locationFilter, searchQuery)
+
+    private fun focusOn(column: Int) { focusColumn = column; focusToken++ }
 
     // ── Observation ──────────────────────────────────────────────────────────
     /** Calls [onChange] immediately and after every state change until [owner] is destroyed. */
@@ -69,7 +74,9 @@ class BoardViewModel : ViewModel() {
             SortMode.DESC -> cards.sortedByDescending { it.upvotes }
             SortMode.ASC -> cards.sortedBy { it.upvotes }
         }
-        Column(col.stage, cards)
+        Column(col.stage, cards.map { c ->
+            c.copy(upvotedByMe = currentUserId?.let { it in c.upvotedBy } == true)
+        })
     }
 
     fun searchResultCount(): Int = visibleColumns().sumOf { it.cards.size }
@@ -84,17 +91,25 @@ class BoardViewModel : ViewModel() {
     }
 
     // ── Reports ──────────────────────────────────────────────────────────────
-    fun upvote(cardId: Int) {
-        val inFixed = columns.firstOrNull { it.stage == Stage.FIXED }?.cards?.any { it.id == cardId } == true
-        if (inFixed) return // fixed reports can't be upvoted
-        updateCard(cardId) { it.copy(upvotes = it.upvotes + 1) }
-    }
 
+    fun upvote(cardId: Int) {
+        val uid = currentUserId ?: return
+        val card = findCard(cardId) ?: return
+        val inFixed = columns.firstOrNull { it.stage == Stage.FIXED }?.cards?.any { it.id == cardId } == true
+        if (inFixed) return
+        updateCard(cardId) {
+            if (uid in card.upvotedBy)
+                it.copy(upvotes = maxOf(0, it.upvotes - 1), upvotedBy = it.upvotedBy - uid)
+            else
+                it.copy(upvotes = it.upvotes + 1, upvotedBy = it.upvotedBy + uid)
+        }
+    }
     fun addReport(
         location: LocationTag, title: String, description: String,
         priority: Priority, imageUri: String?,
         lat: Double? = null, lng: Double? = null,
     ) {
+        focusOn(0)
         val card = ReportCard(
             id = nextId++, location = location, title = title.trim(),
             description = description.trim(), priority = priority, upvotes = 0,
@@ -125,6 +140,7 @@ class BoardViewModel : ViewModel() {
                 else -> col
             }
         }
+        focusOn(to)
         notifyChanged()
     }
 

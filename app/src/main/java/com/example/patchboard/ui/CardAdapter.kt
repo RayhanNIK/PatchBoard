@@ -33,7 +33,12 @@ class CardAdapter(private val actions: CardActions) :
         notifyItemRangeChanged(0, itemCount)
     }
 
-    inner class VH(val b: ItemCardBinding) : RecyclerView.ViewHolder(b.root)
+    inner class VH(val b: ItemCardBinding) : RecyclerView.ViewHolder(b.root) {
+        val upvoteBg = b.btnUpvote.backgroundTintList
+        val upvoteText = b.btnUpvote.textColors
+        val upvoteIcon = b.btnUpvote.iconTint
+        val upvoteStroke = b.btnUpvote.strokeColor
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         VH(ItemCardBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -74,13 +79,29 @@ class CardAdapter(private val actions: CardActions) :
         b.btnBack.setOnClickListener { actions.onMove(card.id, false) }
         b.btnForward.setOnClickListener { actions.onMove(card.id, true) }
 
-        // Footer
+        // Footer: comments
         b.btnComments.text = card.comments.size.toString()
         b.btnComments.contentDescription = b.root.context.getString(R.string.cd_view_comments, card.comments.size)
         b.btnComments.setOnClickListener { actions.onOpenComments(card.id) }
 
+        // Footer: upvote (toggle)
         b.btnUpvote.text = card.upvotes.toString()
         b.btnUpvote.contentDescription = b.root.context.getString(R.string.cd_upvote_count, card.upvotes)
+        b.btnUpvote.isSelected = card.upvotedByMe
+        val ctx = b.root.context
+        if (card.upvotedByMe) {
+            val primary = android.content.res.ColorStateList.valueOf(ctx.color(R.color.pb_primary))
+            val onPrimary = android.content.res.ColorStateList.valueOf(ctx.color(R.color.pb_on_primary))
+            b.btnUpvote.backgroundTintList = primary
+            b.btnUpvote.strokeColor = primary
+            b.btnUpvote.setTextColor(onPrimary)
+            b.btnUpvote.iconTint = onPrimary
+        } else {
+            b.btnUpvote.backgroundTintList = holder.upvoteBg
+            b.btnUpvote.strokeColor = holder.upvoteStroke
+            b.btnUpvote.setTextColor(holder.upvoteText)
+            b.btnUpvote.iconTint = holder.upvoteIcon
+        }
         b.btnUpvote.setOnClickListener { if (!isFixed) actions.onUpvote(card.id) }
     }
 
