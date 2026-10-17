@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="stats_title">Your activity</string>
+    <string name="stat_reports">Reports filed</string>
+    <string name="stat_comments">Comments</string>
+    <string name="stat_upvotes_received">Upvotes received</string>
+    <string name="stat_upvotes_given">Upvotes given</string>
+    <string name="stat_fixed">Reports fixed</string>
+    <string name="stat_pending">Still open</string>
+
+    <string name="contrib_title">Your contribution</string>
+    <string name="contrib_summary">%1$d of %2$d reports fixed (%3$d%%)</string>
+    <string name="contrib_empty">File your first report to start building your impact.</string>
+    <string name="contrib_none_fixed">None of your reports are fixed yet. They will show up here when they are.</string>
+    <string name="contrib_recent_fixed">Recently fixed</string>
+    <string name="contrib_fixed_line">✓ %1$s</string>
+    <string name="contrib_top_location">You report most often in %1$s</string>
+</resources>
