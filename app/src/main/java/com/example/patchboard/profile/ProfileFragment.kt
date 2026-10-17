@@ -14,6 +14,8 @@ import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import com.example.patchboard.ui.BoardViewModel
 import com.example.patchboard.R
 import com.example.patchboard.auth.AuthProvider
 import com.example.patchboard.auth.AuthValidation
@@ -25,6 +27,7 @@ class ProfileFragment : Fragment() {
 
     private var _b: FragmentProfileBinding? = null
     private val b get() = _b!!
+    private lateinit var vm: BoardViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, state: Bundle?): View {
         _b = FragmentProfileBinding.inflate(inflater, container, false)
@@ -39,6 +42,15 @@ class ProfileFragment : Fragment() {
             insets
         }
         ViewCompat.requestApplyInsets(b.header)
+
+        vm = ViewModelProvider(requireActivity())[BoardViewModel::class.java]
+        b.statReports.tvLabel.setText(R.string.stat_reports)
+        b.statComments.tvLabel.setText(R.string.stat_comments)
+        b.statUpvotesReceived.tvLabel.setText(R.string.stat_upvotes_received)
+        b.statUpvotesGiven.tvLabel.setText(R.string.stat_upvotes_given)
+        b.statFixed.tvLabel.setText(R.string.stat_fixed)
+        b.statPending.tvLabel.setText(R.string.stat_pending)
+        vm.observe(viewLifecycleOwner) { renderStats() }
 
         b.tvAvatar.background = GradientDrawable().apply {
             shape = GradientDrawable.OVAL
@@ -55,6 +67,33 @@ class ProfileFragment : Fragment() {
             b.tvEmail.isVisible = !user?.email.isNullOrBlank()
             b.tvAvatar.text = user?.displayName?.trim()?.firstOrNull()?.uppercase() ?: "?"
         }
+    }
+
+    private fun renderStats() {
+        if (_b == null) return
+        val s = ProfileStats.compute(vm.snapshot(), vm.currentUserId)
+        b.statReports.tvValue.text = s.reportsFiled.toString()
+        b.statComments.tvValue.text = s.commentsWritten.toString()
+        b.statUpvotesReceived.tvValue.text = s.upvotesReceived.toString()
+        b.statUpvotesGiven.tvValue.text = s.upvotesGiven.toString()
+        b.statFixed.tvValue.text = s.fixed.toString()
+        b.statPending.tvValue.text = (s.open + s.inProgress).toString()
+
+        b.progressFixRate.setProgressCompat(s.fixRatePercent, true)
+        b.progressFixRate.isVisible = s.reportsFiled > 0
+        b.tvContribSummary.text =
+            if (s.reportsFiled == 0) getString(R.string.contrib_empty)
+            else getString(R.string.contrib_summary, s.fixed, s.reportsFiled, s.fixRatePercent)
+
+        val showRecent = s.reportsFiled > 0
+        b.tvRecentTitle.isVisible = showRecent && s.recentFixed.isNotEmpty()
+        b.tvRecentFixed.isVisible = showRecent
+        b.tvRecentFixed.text =
+            if (s.recentFixed.isEmpty()) getString(R.string.contrib_none_fixed)
+            else s.recentFixed.joinToString("\n") { getString(R.string.contrib_fixed_line, it) }
+
+        b.tvTopLocation.isVisible = s.topLocation != null
+        s.topLocation?.let { b.tvTopLocation.text = getString(R.string.contrib_top_location, it.tag) }
     }
 
     /** Rename dialog built in code (no extra layout). Stays open until the name is valid and saved. */
