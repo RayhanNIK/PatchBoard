@@ -30,6 +30,7 @@ class BoardViewModel : ViewModel() {
     var priorityFilter: Priority? = null; private set   // null = "All"
     var sortMode: SortMode = SortMode.OFF; private set
     var locationFilter: LocationTag? = null; private set  // null = all locations
+    var locationTags: List<LocationTag> = LocationTag.DEFAULTS; private set
     var focusToken: Int = 0; private set
     var focusColumn: Int = 0; private set
     val viewKey: List<Any?> get() = listOf(sortMode, priorityFilter, locationFilter, searchQuery)
@@ -186,6 +187,15 @@ class BoardViewModel : ViewModel() {
         notifyChanged()
     }
 
+    // ── Location tags (admin) ────────────────────────────────────────────────
+    fun addLocationTag(raw: String): AddTagResult {
+        val tag = LocationTagNames.normalize(raw) ?: return AddTagResult.INVALID
+        if (locationTags.any { it.tag.equals(tag, ignoreCase = true) }) return AddTagResult.DUPLICATE
+        locationTags = locationTags + LocationTag.custom(tag, locationTags.size)
+        notifyChanged()
+        return AddTagResult.ADDED
+    }
+
     // ── Toolbar state ────────────────────────────────────────────────────────
     fun setPriorityFilter(p: Priority?) { priorityFilter = p; notifyChanged() }
 
@@ -222,4 +232,18 @@ class BoardViewModel : ViewModel() {
     fun clearAccount() { isAdmin = false; currentUserId = null; currentUser = ""; notifyChanged() }
 
     fun snapshot(): List<Column> = columns.map { it.copy(cards = it.cards.toList()) }
+
+    fun locationUsage(tag: LocationTag): Int = columns.sumOf { col -> col.cards.count { it.location == tag } }
+
+    fun removeLocationTag(tag: LocationTag): Boolean {
+        if (locationTags.size <= 1 || locationUsage(tag) > 0) return false
+        locationTags = locationTags - tag
+        if (locationFilter == tag) locationFilter = null
+        notifyChanged()
+        return true
+
+    }
 }
+
+enum class AddTagResult { ADDED, INVALID, DUPLICATE }
+

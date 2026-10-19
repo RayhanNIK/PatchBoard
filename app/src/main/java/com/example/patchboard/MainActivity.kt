@@ -166,7 +166,7 @@ class MainActivity : AppCompatActivity(), CardActions {
 
     /** Single-choice dialog built in code, so no new layout is needed. */
     private fun showLocationPicker() {
-        val locations = LocationTag.values()
+        val locations = vm.locationTags
         val items = arrayOf(getString(R.string.filter_location_all)) + locations.map { it.tag }
         val checked = vm.locationFilter?.let { locations.indexOf(it) + 1 } ?: 0
         MaterialAlertDialogBuilder(this)

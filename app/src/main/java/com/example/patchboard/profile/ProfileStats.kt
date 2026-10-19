@@ -44,7 +44,7 @@ data class ProfileStats(
             }
 
             val top = byLocation.entries
-                .sortedWith(compareByDescending<Map.Entry<LocationTag, Int>> { it.value }.thenBy { it.key.ordinal })
+                .sortedWith(compareByDescending<Map.Entry<LocationTag, Int>> { it.value }.thenBy { it.key.tag })
                 .firstOrNull()?.key
 
             return ProfileStats(

@@ -1,7 +1,12 @@
 package com.example.patchboard.data
 
 import com.example.patchboard.model.*
-import com.example.patchboard.model.LocationTag.*
+import com.example.patchboard.model.LocationTag.Companion.IT_LAB
+import com.example.patchboard.model.LocationTag.Companion.LIBRARY
+import com.example.patchboard.model.LocationTag.Companion.CAFETERIA
+import com.example.patchboard.model.LocationTag.Companion.GYM
+import com.example.patchboard.model.LocationTag.Companion.LECTURE_HALL
+import com.example.patchboard.model.LocationTag.Companion.RESTROOM
 import com.example.patchboard.map.MapDefaults
 import com.example.patchboard.model.Priority.*
 import java.util.Calendar
@@ -39,6 +44,7 @@ object SeedData {
             GYM -> -0.0006 to -0.0005
             LECTURE_HALL -> 0.0007 to 0.0001
             RESTROOM -> 0.0 to -0.0009
+            else -> 0.0 to 0.0
         }
         val jitter = (card.id % 4) * 0.00004
         return card.copy(

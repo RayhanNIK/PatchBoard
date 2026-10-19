@@ -1,14 +1,18 @@
 package com.example.patchboard.ui
 
+import android.R.attr.inputType
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
@@ -27,6 +31,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.chip.Chip
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.io.File
 import kotlin.math.max
 
@@ -37,7 +42,7 @@ class AddReportSheet : BottomSheetDialogFragment() {
     private val b get() = _b!!
     private lateinit var vm: BoardViewModel
 
-    private var location = LocationTag.IT_LAB
+    private var location: LocationTag = LocationTag.IT_LAB
     private var priority = Priority.MEDIUM
     private var imageFile: File? = null      // photo attached to this draft
     private var pendingCameraFile: File? = null
@@ -62,7 +67,9 @@ class AddReportSheet : BottomSheetDialogFragment() {
         super.onCreate(savedInstanceState)
         vm = ViewModelProvider(requireActivity())[BoardViewModel::class.java]
         savedInstanceState?.let { s ->
-            location = LocationTag.values().getOrElse(s.getInt(KEY_LOCATION)) { location }
+            s.getString(KEY_LOCATION)?.let { saved ->
+                vm.locationTags.firstOrNull { it.tag == saved }?.let { location = it }
+            }
             priority = Priority.values().getOrElse(s.getInt(KEY_PRIORITY)) { priority }
             s.getString(KEY_IMAGE)?.let { imageFile = File(it) }
             s.getString(KEY_PENDING)?.let { pendingCameraFile = File(it) }
@@ -72,7 +79,7 @@ class AddReportSheet : BottomSheetDialogFragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putInt(KEY_LOCATION, location.ordinal)
+        outState.putString(KEY_LOCATION, location.tag)
         outState.putInt(KEY_PRIORITY, priority.ordinal)
         imageFile?.let { outState.putString(KEY_IMAGE, it.absolutePath) }
         pendingCameraFile?.let { outState.putString(KEY_PENDING, it.absolutePath) }
@@ -135,7 +142,11 @@ class AddReportSheet : BottomSheetDialogFragment() {
     // ── Location chips ───────────────────────────────────────────────────────
     private fun buildLocationChips() {
         val ctx = requireContext()
-        LocationTag.values().forEach { loc ->
+        b.locationGroup.removeAllViews()
+        locationChips.clear()
+        if (location !in vm.locationTags) location = vm.locationTags.first()
+
+        vm.locationTags.forEach { loc ->
             val chip = Chip(ctx).apply {
                 text = loc.tag
                 isCheckable = false
@@ -146,9 +157,70 @@ class AddReportSheet : BottomSheetDialogFragment() {
                 chipBackgroundColor = ColorStateList.valueOf(ctx.color(loc.bgRes))
                 chipStrokeWidth = ctx.dp(2).toFloat()
                 setOnClickListener { location = loc; renderLocation() }
+                if (vm.isAdmin) setOnLongClickListener { confirmDeleteLocation(loc); true }   // admin: hold to delete
             }
             locationChips[loc] = chip
             b.locationGroup.addView(chip)
+        }
+
+        if (vm.isAdmin) {                                      // admin only: "+ Add location" chip
+            b.locationGroup.addView(Chip(ctx).apply {
+                text = getString(R.string.location_add_chip)
+                isCheckable = false
+                isCheckedIconVisible = false
+                setEnsureMinTouchTargetSize(false)
+                textSize = 11f
+                setTextColor(ctx.color(R.color.pb_primary))
+                chipBackgroundColor = ColorStateList.valueOf(Color.TRANSPARENT)
+                chipStrokeColor = ColorStateList.valueOf(ctx.color(R.color.pb_primary))
+                chipStrokeWidth = ctx.dp(1).toFloat()
+                setOnClickListener { showAddLocationDialog() }
+            })
+        }
+    }
+
+    private fun showAddLocationDialog() {
+        val ctx = requireContext()
+        val pad = ctx.dp(20)
+        val input = EditText(ctx).apply {
+            hint = getString(R.string.location_add_hint)
+            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_WORDS
+            setSingleLine()
+        }
+        val holder = FrameLayout(ctx).apply { setPadding(pad, pad / 2, pad, 0); addView(input) }
+        val dialog = MaterialAlertDialogBuilder(ctx)
+            .setTitle(R.string.location_add_title)
+            .setView(holder)
+            .setNegativeButton(R.string.action_cancel, null)
+            .setPositiveButton(R.string.location_add_confirm, null)   // real handler below keeps the dialog open on errors
+            .create()
+        dialog.show()
+        dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+            when (vm.addLocationTag(input.text.toString())) {
+                AddTagResult.ADDED -> {
+                    location = vm.locationTags.last()          // select the new tag right away
+                    buildLocationChips(); renderLocation()
+                    dialog.dismiss()
+                }
+                AddTagResult.DUPLICATE -> input.error = getString(R.string.location_err_duplicate)
+                AddTagResult.INVALID -> input.error = getString(R.string.location_err_invalid)
+            }
+        }
+    }
+
+    private fun confirmDeleteLocation(loc: LocationTag) {
+        val ctx = requireContext()
+        val used = vm.locationUsage(loc)
+        when {
+            used > 0 -> Toast.makeText(ctx, getString(R.string.location_in_use, loc.tag, used), Toast.LENGTH_LONG).show()
+            vm.locationTags.size <= 1 -> Toast.makeText(ctx, R.string.location_last, Toast.LENGTH_LONG).show()
+            else -> MaterialAlertDialogBuilder(ctx)
+                .setTitle(getString(R.string.location_delete_title, loc.tag))
+                .setNegativeButton(R.string.action_cancel, null)
+                .setPositiveButton(R.string.action_delete) { _, _ ->
+                    vm.removeLocationTag(loc); buildLocationChips(); renderLocation()
+                }
+                .show()
         }
     }
 

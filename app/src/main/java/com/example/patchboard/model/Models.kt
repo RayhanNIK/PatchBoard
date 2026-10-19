@@ -14,18 +14,30 @@ enum class Priority(
     LOW("Low", R.color.prio_low_bg, R.color.prio_low_text, R.color.prio_low_dot),
 }
 
-enum class LocationTag(
+data class LocationTag(
     val tag: String,
     @ColorRes val bgRes: Int,
     @ColorRes val textRes: Int,
 ) {
-    IT_LAB("#ITLab", R.color.loc_itlab_bg, R.color.loc_itlab_text),
-    LIBRARY("#Library", R.color.loc_library_bg, R.color.loc_library_text),
-    CAFETERIA("#Cafeteria", R.color.loc_cafeteria_bg, R.color.loc_cafeteria_text),
-    GYM("#Gym", R.color.loc_gym_bg, R.color.loc_gym_text),
-    LECTURE_HALL("#LectureHall", R.color.loc_lecture_bg, R.color.loc_lecture_text),
-    RESTROOM("#Restroom", R.color.loc_restroom_bg, R.color.loc_restroom_text),
+    val order: Int get() = DEFAULTS.indexOf(this).let { if (it < 0) Int.MAX_VALUE else it }
+
+    companion object {
+        val IT_LAB = LocationTag("#ITLab", R.color.loc_itlab_bg, R.color.loc_itlab_text)
+        val LIBRARY = LocationTag("#Library", R.color.loc_library_bg, R.color.loc_library_text)
+        val CAFETERIA = LocationTag("#Cafeteria", R.color.loc_cafeteria_bg, R.color.loc_cafeteria_text)
+        val GYM = LocationTag("#Gym", R.color.loc_gym_bg, R.color.loc_gym_text)
+        val LECTURE_HALL = LocationTag("#LectureHall", R.color.loc_lecture_bg, R.color.loc_lecture_text)
+        val RESTROOM = LocationTag("#Restroom", R.color.loc_restroom_bg, R.color.loc_restroom_text)
+
+        val DEFAULTS: List<LocationTag> = listOf(IT_LAB, LIBRARY, CAFETERIA, GYM, LECTURE_HALL, RESTROOM)
+
+        fun custom(tag: String, index: Int): LocationTag {
+            val c = DEFAULTS[index % DEFAULTS.size]
+            return LocationTag(tag, c.bgRes, c.textRes)
+        }
+    }
 }
+
 
 /** Board stages, in workflow order. */
 enum class Stage(val title: String, @ColorRes val accentRes: Int) {

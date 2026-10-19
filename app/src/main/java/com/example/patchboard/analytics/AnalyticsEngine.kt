@@ -79,7 +79,7 @@ object AnalyticsEngine {
         val durations = fixedList.mapNotNull { r -> r.resolvedAt?.let { (it - r.createdAt).coerceAtLeast(0L) } }
         val average = if (durations.isEmpty()) null else durations.sum() / durations.size
 
-        val locations = LocationTag.values()
+        val locations = filedInWindow.map { it.location }.distinct()
             .map { loc ->
                 val rows = filedInWindow.filter { it.location == loc }
                 LocationStat(
@@ -95,7 +95,7 @@ object AnalyticsEngine {
             .sortedWith(
                 compareByDescending<LocationStat> { it.total }
                     .thenByDescending { it.open }
-                    .thenBy { it.location.ordinal }
+                    .thenBy { it.location.order }.thenBy { it.location.tag }
             )
 
         // Trend: equal slices of [start, end).
