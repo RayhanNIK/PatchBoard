@@ -12,4 +12,5 @@ object LocationTagNames {
         if (body.length < MIN_LENGTH || body.length > MAX_LENGTH) return null
         return "#$body"
     }
+    fun idFor(tag: String): String = tag.removePrefix("#").lowercase()
 }
