@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="location_add_chip">+ Add location</string>
+    <string name="location_add_title">Add a location</string>
+    <string name="location_add_hint">e.g. Front Gate</string>
+    <string name="location_add_confirm">Add</string>
+    <string name="location_err_invalid">Use 2–24 letters or numbers (spaces are fine)</string>
+    <string name="location_err_duplicate">That location already exists</string>
+    <string name="location_in_use">%1$s is used by %2$d report(s), so it can\'t be deleted</string>
+    <string name="location_last">At least one location must remain</string>
+    <string name="location_delete_title">Delete %1$s?</string>
+</resources>
