@@ -29,7 +29,6 @@ import com.example.patchboard.model.Priority
 import com.example.patchboard.model.SortMode
 import com.example.patchboard.profile.ProfileFragment
 import com.example.patchboard.ui.AddReportSheet
-import com.example.patchboard.ui.AdminLoginSheet
 import com.example.patchboard.ui.BoardViewModel
 import com.example.patchboard.ui.CardActions
 import com.example.patchboard.ui.ColumnAdapter
@@ -147,10 +146,6 @@ class MainActivity : AppCompatActivity(), CardActions {
             binding.etSearch.requestFocus()
         }
         binding.etSearch.doAfterTextChanged { vm.setSearchQuery(it?.toString().orEmpty()) }
-        binding.btnAdminSignIn.setOnClickListener {
-            AdminLoginSheet().show(supportFragmentManager, "admin")
-        }
-        binding.btnAdminActive.setOnClickListener { vm.signOut() } // tap "Admin" to sign out
     }
 
     private fun setupFilters() {
@@ -206,7 +201,7 @@ class MainActivity : AppCompatActivity(), CardActions {
         binding.btnTheme.setImageResource(if (isNight) R.drawable.ic_light_mode else R.drawable.ic_dark_mode)
 
         // Admin button
-        binding.btnAdminSignIn.visibility = if (vm.isAdmin) View.GONE else View.VISIBLE
+        binding.btnAdminSignIn.visibility = View.GONE
         binding.btnAdminActive.visibility = if (vm.isAdmin) View.VISIBLE else View.GONE
 
         // Search row
@@ -262,6 +257,10 @@ class MainActivity : AppCompatActivity(), CardActions {
         binding.btnSort.strokeColor =
             ColorStateList.valueOf(color(if (sorted) R.color.pb_primary else R.color.pb_outline))
         binding.btnSort.setTextColor(color(if (sorted) R.color.pb_on_primary else R.color.pb_on_surface_variant))
+        vm.pendingError?.let {
+            Toast.makeText(this, it, Toast.LENGTH_LONG).show()
+            vm.consumeError()
+        }
     }
 
     /**
