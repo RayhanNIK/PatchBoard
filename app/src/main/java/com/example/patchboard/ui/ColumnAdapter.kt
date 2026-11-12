@@ -62,9 +62,11 @@ class ColumnAdapter(private val actions: CardActions) : RecyclerView.Adapter<Col
         val addJump = holder.seenAddEpoch != addEpoch
         holder.seenEpoch = scrollEpoch
         holder.seenAddEpoch = addEpoch
-        val jump = viewJump || (position == focusColumn && addJump)    // a new report only moves the first column
+        val jump = viewJump || (position == focusColumn && addJump)
+        val rv = holder.b.cardsRecycler
+        val atTop = !rv.canScrollVertically(-1)
         holder.cardAdapter.submitList(col.cards) {
-            if (jump) holder.b.cardsRecycler.scrollToPosition(0)
+            if (jump || atTop) rv.scrollToPosition(0)
         }
     }
 }
