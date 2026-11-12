@@ -314,6 +314,16 @@ class MainActivity : AppCompatActivity(), CardActions {
 
     override fun onOpenImage(uri: String) = ImageViewer.show(this, uri)
 
+    override fun onDelete(cardId: Int) {
+        val card = vm.findCard(cardId) ?: return
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.delete_report_title)
+            .setMessage(getString(R.string.delete_report_message, card.title))
+            .setNegativeButton(R.string.action_cancel, null)
+            .setPositiveButton(R.string.action_delete) { _, _ -> vm.deleteReport(cardId) }
+            .show()
+    }
+
     private companion object {
         const val PAGE_REPORTS = "analytics"
         const val PAGE_MAP = "map"
