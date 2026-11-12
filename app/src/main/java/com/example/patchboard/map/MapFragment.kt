@@ -151,10 +151,51 @@ class MapFragment : Fragment() {
 
         if (!framed) {
             framed = true
-            if (focusId >= 0 && markers.containsKey(focusId)) select(focusId, animate = false, zoom = 18f)
-            else frameAll(gm)
+            if (focusId >= 0 && markers.containsKey(focusId)) {
+                select(focusId, animate = false, zoom = 18f)
+            } else if (hasLocationPermission()) {
+                gm.moveCamera(CameraUpdateFactory.newLatLngZoom(MapDefaults.campus, MapDefaults.ZOOM))
+                centerOnMe(onFail = { map?.let { frameAll(it) } })
+            } else {
+                frameAll(gm)
+                if (!locationAsked) {
+                    locationAsked = true
+                    locationPermission.launch(arrayOf(
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                    ))
+                }
+            }
         }
         showSelected()
+    }
+
+    private fun hasLocationPermission(): Boolean {
+        val ctx = requireContext()
+        return ContextCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun enableMyLocation(gm: GoogleMap) {
+        if (!hasLocationPermission()) return
+        gm.isMyLocationEnabled = true
+        gm.uiSettings.isMyLocationButtonEnabled = true
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun centerOnMe(onFail: (() -> Unit)? = null) {
+        if (!hasLocationPermission()) { onFail?.invoke(); return }
+        LocationServices.getFusedLocationProviderClient(requireContext())
+            .getCurrentLocation(Priority.PRIORITY_BALANCED_POWER_ACCURACY, CancellationTokenSource().token)
+            .addOnSuccessListener { loc ->
+                val gm = map
+                if (_b == null || gm == null) return@addOnSuccessListener
+                if (loc != null) {
+                    gm.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(loc.latitude, loc.longitude), MapDefaults.ZOOM))
+                } else onFail?.invoke()
+            }
+            .addOnFailureListener { if (_b != null) onFail?.invoke() }
     }
 
     private fun frameAll(gm: GoogleMap) {
