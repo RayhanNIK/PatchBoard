@@ -16,7 +16,8 @@ data class ReportDoc(
     val lat: Double?,
     val lng: Double?,
     val authorId: String?,
-    val authorName: String?,         // snapshot, only a fallback; live names come from members
+    val authorName: String?,
+    val imageData: String? = null,// snapshot, only a fallback; live names come from members
 )
 
 data class CommentDoc(
@@ -59,6 +60,8 @@ interface BoardRepository {
     fun addReport(doc: ReportDoc)
     fun toggleUpvote(reportId: String, uid: String, add: Boolean)
     fun moveReport(reportId: String, stage: String, resolvedAt: Long?, orderAt: Long)
+    /** Deletes the report and its comments in one atomic batch. */
+    fun deleteReport(reportId: String, commentIds: List<String>)
 
     fun addComment(doc: CommentDoc)
     fun editComment(commentId: String, text: String)
