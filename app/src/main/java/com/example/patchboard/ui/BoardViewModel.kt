@@ -72,7 +72,6 @@ class BoardViewModel(private val repo: BoardRepository) : ViewModel() {
         id
     }
 
-    private val localImages = HashMap<String, String>()     // photos are still device-local (see notes)
     private val lastUpvoteAt = HashMap<String, Long>()
 
     // ── Observation ──────────────────────────────────────────────────────────
@@ -128,7 +127,6 @@ class BoardViewModel(private val repo: BoardRepository) : ViewModel() {
                 )
             },
             createdAt = d.createdAt,
-            imageUri = localImages[d.id],
             resolvedAt = d.resolvedAt,
             lat = d.lat,
             lng = d.lng,
@@ -136,6 +134,8 @@ class BoardViewModel(private val repo: BoardRepository) : ViewModel() {
             authorName = nameOf(d.authorId, d.authorName),
             upvotedBy = d.upvotedBy.toSet(),
             upvotedByMe = me != null && me in d.upvotedBy,
+            canDelete = isAdmin || (me != null && d.authorId == me),   // <- new line
+            imageUri = d.imageData?.let { "data:image/jpeg;base64,$it" },
         )
     }
 
@@ -209,6 +209,41 @@ class BoardViewModel(private val repo: BoardRepository) : ViewModel() {
         repo.toggleUpvote(docId, uid, add = uid !in card.upvotedBy)
     }
 
+    /** Shrinks the photo to about 900px JPEG and returns it as base64, so it can live in the Firestore document. */
+    private fun encodePhoto(uri: String?): String? {
+        val path = uri?.let { android.net.Uri.parse(it).path } ?: return null
+        return try {
+            val bounds = android.graphics.BitmapFactory.Options().apply { inJustDecodeBounds = true }
+            android.graphics.BitmapFactory.decodeFile(path, bounds)
+            var sample = 1
+            while (maxOf(bounds.outWidth, bounds.outHeight) / sample > 1800) sample *= 2
+            val src = android.graphics.BitmapFactory.decodeFile(
+                path, android.graphics.BitmapFactory.Options().apply { inSampleSize = sample }
+            ) ?: return null
+
+            // keep the camera's rotation: re-encoding drops the EXIF tag
+            val degrees = when (android.media.ExifInterface(path)
+                .getAttributeInt(android.media.ExifInterface.TAG_ORIENTATION, 1)) {
+                android.media.ExifInterface.ORIENTATION_ROTATE_90 -> 90f
+                android.media.ExifInterface.ORIENTATION_ROTATE_180 -> 180f
+                android.media.ExifInterface.ORIENTATION_ROTATE_270 -> 270f
+                else -> 0f
+            }
+            val scale = minOf(1f, 900f / maxOf(src.width, src.height))
+            val m = android.graphics.Matrix().apply { postScale(scale, scale); postRotate(degrees) }
+            val bmp = android.graphics.Bitmap.createBitmap(src, 0, 0, src.width, src.height, m, true)
+
+            val out = java.io.ByteArrayOutputStream()
+            var q = 75
+            do {
+                out.reset()
+                bmp.compress(android.graphics.Bitmap.CompressFormat.JPEG, q, out)
+                q -= 10
+            } while (out.size() > 400_000 && q >= 35)
+            android.util.Base64.encodeToString(out.toByteArray(), android.util.Base64.NO_WRAP)
+        } catch (e: Exception) { null }
+    }
+
     fun addReport(
         location: LocationTag, title: String, description: String,
         priority: Priority, imageUri: String?,
@@ -218,14 +253,13 @@ class BoardViewModel(private val repo: BoardRepository) : ViewModel() {
         val id = repo.newReportId()
         if (id.isEmpty()) return
         val now = System.currentTimeMillis()
-        imageUri?.let { localImages[id] = it }
         pendingFocusColumn = 0
         repo.addReport(
             ReportDoc(
                 id = id, location = location.tag, title = title.trim(), description = description.trim(),
                 priority = priority.name, stage = Stage.REPORTED.name, upvotes = 0, upvotedBy = emptyList(),
                 createdAt = now, orderAt = now, resolvedAt = null, lat = lat, lng = lng,
-                authorId = uid, authorName = currentUser.ifBlank { null },
+                authorId = uid, authorName = currentUser.ifBlank { null }, imageData = encodePhoto(imageUri),
             )
         )
     }
@@ -245,6 +279,14 @@ class BoardViewModel(private val repo: BoardRepository) : ViewModel() {
             resolvedAt = if (columns[to].stage == Stage.FIXED) now else null,
             orderAt = now,
         )
+    }
+
+    fun deleteReport(cardId: Int) {
+        val card = findCard(cardId) ?: return
+        if (!card.canDelete) return
+        val docId = docIds[cardId] ?: return
+        val commentIds = commentDocs.filter { it.reportId == docId }.map { it.id }
+        repo.deleteReport(docId, commentIds)
     }
 
     // ── Comments ─────────────────────────────────────────────────────────────
