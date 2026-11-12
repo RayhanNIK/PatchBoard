@@ -17,6 +17,7 @@ interface CardActions {
     fun onOpenComments(cardId: Int)
     fun onMove(cardId: Int, forward: Boolean)
     fun onOpenImage(uri: String)
+    fun onDelete(cardId: Int)
 }
 
 class CardAdapter(private val actions: CardActions) :
@@ -78,6 +79,10 @@ class CardAdapter(private val actions: CardActions) :
         b.btnForward.alpha = if (last) 0.45f else 1f
         b.btnBack.setOnClickListener { actions.onMove(card.id, false) }
         b.btnForward.setOnClickListener { actions.onMove(card.id, true) }
+
+        //delete
+        b.btnDelete.visibility = if (card.canDelete) android.view.View.VISIBLE else android.view.View.GONE
+        b.btnDelete.setOnClickListener { actions.onDelete(card.id) }
 
         // Footer: comments
         b.btnComments.text = card.comments.size.toString()

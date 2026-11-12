@@ -73,6 +73,7 @@ data class ReportCard(
     val authorName: String? = null, // shown on the card as "by <name>"
     val upvotedBy: Set<String> = emptySet(),   // account ids that already upvoted
     val upvotedByMe: Boolean = false,          // filled in per viewer by the ViewModel
+    val canDelete: Boolean = false,
 ) {
     val hasPin: Boolean get() = lat != null && lng != null
 }
