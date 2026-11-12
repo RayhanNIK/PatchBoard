@@ -94,6 +94,7 @@ class FirestoreBoardRepository(
             doc.authorName?.let { put("authorName", it) }
             doc.lat?.let { put("lat", it) }
             doc.lng?.let { put("lng", it) }
+            doc.imageData?.let { put("imageData", it) }
         }
         ref.set(data).addOnFailureListener { fail(it) }
     }
@@ -117,6 +118,14 @@ class FirestoreBoardRepository(
                 "orderAt" to orderAt,
             )
         ).addOnFailureListener { fail(it) }
+    }
+
+    override fun deleteReport(reportId: String, commentIds: List<String>) {
+        val root = ws ?: return
+        val batch = db.batch()                                   // all-or-nothing: no orphaned comments
+        commentIds.forEach { batch.delete(root.collection("comments").document(it)) }
+        batch.delete(root.collection("reports").document(reportId))
+        batch.commit().addOnFailureListener { fail(it) }
     }
 
     // ── Comments ─────────────────────────────────────────────────────────────
@@ -183,6 +192,7 @@ class FirestoreBoardRepository(
             lng = getDouble("lng"),
             authorId = getString("authorId"),
             authorName = getString("authorName"),
+            imageData = getString("imageData"),
         )
     }
 
