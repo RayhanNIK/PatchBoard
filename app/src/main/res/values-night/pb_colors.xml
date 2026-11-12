@@ -3,7 +3,7 @@
     <color name="pb_bg">#141218</color>
     <color name="pb_surface">#1C1B1F</color>
     <color name="pb_card">#211F26</color>
-    <color name="pb_column_bg">#2B2930</color>
+        <color name="pb_column_bg">#2B2930</color>
     <color name="pb_column_bg_first">#2B2930</color>
     <color name="pb_filter_row_bg">#211F26</color>
     <color name="pb_modal_bg">#2B2930</color>

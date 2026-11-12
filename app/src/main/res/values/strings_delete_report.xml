@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cd_delete_report">Delete report</string>
+    <string name="delete_report_title">Delete this report?</string>
+    <string name="delete_report_message">“%1$s” and all of its comments will be deleted for everyone. This cannot be undone.</string>
+</resources>
