@@ -22,6 +22,13 @@ import com.example.patchboard.model.Stage
 import com.example.patchboard.ui.BoardViewModel
 import com.example.patchboard.ui.CommentsSheet
 import com.example.patchboard.ui.color
+import android.Manifest
+import android.annotation.SuppressLint
+import android.content.pm.PackageManager
+import androidx.activity.result.contract.ActivityResultContracts
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
@@ -50,6 +57,13 @@ class MapFragment : Fragment() {
     private var selectedId = -1
     private var focusId = -1            // report to zoom to on first render (from a card)
     private var framed = false
+
+    private var locationAsked = false
+    private val locationPermission = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { granted ->
+        if (granted.values.any { it }) map?.let { enableMyLocation(it); centerOnMe() }
+    }
 
     /** The one place that decides where reports come from. */
     private fun createSource(): ReportSource {
@@ -102,6 +116,7 @@ class MapFragment : Fragment() {
         map = gm
         gm.uiSettings.isZoomControlsEnabled = true
         gm.uiSettings.isMapToolbarEnabled = false
+        enableMyLocation(gm)
         gm.setOnMarkerClickListener { m ->
             (m.tag as? Int)?.let { select(it, animate = true) }
             true                                        // we handle it (no default info window)
