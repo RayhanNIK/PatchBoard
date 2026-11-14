@@ -18,6 +18,7 @@ interface CardActions {
     fun onMove(cardId: Int, forward: Boolean)
     fun onOpenImage(uri: String)
     fun onDelete(cardId: Int)
+    fun onShowOnMap(cardId: Int)
 }
 
 class CardAdapter(private val actions: CardActions) :
@@ -49,9 +50,11 @@ class CardAdapter(private val actions: CardActions) :
         val b = holder.b
         val isFixed = stage == Stage.FIXED
 
-        b.cardRoot.alpha = if (isFixed) 0.72f else 1f
+        b.cardRoot.getChildAt(0).alpha = if (isFixed) 0.55f else 1f
         b.tvLocation.bindLocationTag(card.location)
         b.tvCreated.bindCreatedTime(card.createdAt)
+        b.btnPin.visibility = if (card.hasPin) android.view.View.VISIBLE else android.view.View.GONE
+        b.btnPin.setOnClickListener { actions.onShowOnMap(card.id) }
         b.tvTitle.text = card.title
         b.tvAuthor.text = b.root.context.getString(R.string.card_by_author, card.authorName ?: b.root.context.getString(R.string.author_unknown))
         b.tvDescription.text = card.description
