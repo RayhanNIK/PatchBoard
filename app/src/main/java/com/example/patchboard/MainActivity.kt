@@ -314,6 +314,8 @@ class MainActivity : AppCompatActivity(), CardActions {
 
     override fun onOpenImage(uri: String) = ImageViewer.show(this, uri)
 
+    override fun onShowOnMap(cardId: Int) = focusOnMap(cardId)
+
     override fun onDelete(cardId: Int) {
         val card = vm.findCard(cardId) ?: return
         MaterialAlertDialogBuilder(this)

@@ -51,6 +51,17 @@
                 android:textColor="@color/pb_on_surface_variant"
                 android:textSize="10.5sp"
                 android:textStyle="bold" />
+
+            <ImageButton
+                android:id="@+id/btnPin"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/cd_show_on_map"
+                android:src="@drawable/ic_pin"
+                app:tint="@color/pb_primary"
+                android:visibility="gone" />
+
             <ImageButton
                 android:id="@+id/btnDelete"
                 android:layout_width="32dp"

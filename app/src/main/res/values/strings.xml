@@ -32,6 +32,7 @@
     <string name="cd_photo_preview">Preview</string>
     <string name="cd_remove_photo">Remove photo</string>
     <string name="cd_close">Close</string>
+    <string name="cd_show_on_map">Show on map</string>
 
     <!-- Comments -->
     <string name="comment_edited">(edited)</string>
